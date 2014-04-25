@@ -1,12 +1,7 @@
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
-
+/**
+ * This is the main epub export class.
+ * It gets called from the plugin class after the options have been set in the dialog
+ */
 #ifndef EPUBEXPORT_H
 #define EPUBEXPORT_H
 
@@ -14,6 +9,8 @@
 
 class ScribusDoc;
 class MultiProgressDialog;
+
+class EpubExportScribusDoc;
 
 struct EpubExportOptions
 {
@@ -43,7 +40,7 @@ public:
 	EpubExportOptions options;
     void setOptions(EpubExportOptions options) {this->options = options;}
 
-    void setScribusDocument(ScribusDoc* doc);
+    void addScribusDocument(ScribusDoc* doc);
 	void doExport();
 
     void setProgressDialog(MultiProgressDialog* dialog) {progressDialog = dialog;}
@@ -51,7 +48,7 @@ public:
 private:
     MultiProgressDialog* progressDialog;
 
-    // EpubExportScribusDoc* doc;
+    EpubExportScribusDoc* doc;
 
 };
 #endif // EPUBEXPORT_H

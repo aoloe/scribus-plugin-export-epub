@@ -3,6 +3,8 @@
 #include "epubexport.h"
 #include "scribusdoc.h"
 
+#include "module/epubexportScribusDoc.h"
+
 EpubExport::EpubExport()
 {
     // progressDialog = 0;
@@ -14,12 +16,12 @@ EpubExport::EpubExport()
 
 EpubExport::~EpubExport()
 {
-    // this->doc = new EpubExportScribusDoc();
+    this->doc = new EpubExportScribusDoc();
 }
 
-void EpubExport::setScribusDocument(ScribusDoc* doc)
+void EpubExport::addScribusDocument(ScribusDoc* doc)
 {
-    // this->doc->add(doc);
+    this->doc->add(doc);
 
 }
 
