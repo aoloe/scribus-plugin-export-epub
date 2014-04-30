@@ -22,9 +22,18 @@ public:
     void create();
     void close();
 
+    void addUncompressed(QString filename, QString content);
+
 private:
 	EpubExportZip *file;
     QString filename;
+    /**
+     * we're only interested in maximal and no compression
+     */
+    inline EpubExportZip::CompressionLevel getDefaultCompressionLevel(bool compressing)
+    {
+        return compressing ? EpubExportZip::Deflate9 : EpubExportZip::Store;
+    }
 };
 
 QDebug operator<<(QDebug dbg, const EpubExportEpubfile &epub);
