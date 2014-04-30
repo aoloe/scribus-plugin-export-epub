@@ -38,14 +38,15 @@ void EpubExportZip::addString(const QString& path, QString& content, Compression
     QTemporaryDir dir;
     if (dir.isValid()) {
         // dir.path() returns the unique directory path
-        QString filename = QDir(dir.path()).filePath(QFileInfo(path).fileName());
+        QFileInfo fileinfo(path);
+        QString filename = QDir(dir.path()).filePath(fileinfo.fileName());
         // qDebug() << "filename" << filename;
         QFile file(filename);
         if (file.open(QFile::WriteOnly)) {
             QTextStream out(&file);
             out << content;
             file.close();
-            addFile(filename, path, level);
+            addFile(filename, fileinfo.path(), level);
         } else {
             qDebug() << "could not open temporary file" << file.fileName();
         }

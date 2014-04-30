@@ -54,7 +54,10 @@ void EpubExport::doExport()
 
 	epub->add("OEBPS/content.opf", structure.getOPF());
 
-	epub->addUncompressed("OEBPS/Images/cover.png", structure.getCover());
+    if (structure.hasCover())
+    {
+        epub->addUncompressed("OEBPS/Images/cover.png", structure.getCover());
+    }
 
     epub->close();
 }
