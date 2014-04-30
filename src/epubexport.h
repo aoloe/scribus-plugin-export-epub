@@ -45,10 +45,16 @@ public:
 
     void setProgressDialog(MultiProgressDialog* dialog) {progressDialog = dialog;}
 
+public slots:
+    void cancelRequested();
+
 private:
     MultiProgressDialog* progressDialog;
 
     EpubExportScribusDoc* doc;
 
 };
+
+QDebug operator<<(QDebug dbg, const EpubExportOptions options);
+
 #endif // EPUBEXPORT_H

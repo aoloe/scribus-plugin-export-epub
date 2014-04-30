@@ -14,9 +14,9 @@ public:
 	EpubExportScribusDoc();
 	~EpubExportScribusDoc();
 
-    void add(ScribusDoc* doc) {this->doc << doc;}
+    void set(ScribusDoc* doc) {this->doc = doc;}
 private:
-    QList<ScribusDoc*> doc;
+    ScribusDoc* doc;
 };
 
 QDebug operator<<(QDebug dbg, const EpubExportScribusDoc &scribusDoc);
