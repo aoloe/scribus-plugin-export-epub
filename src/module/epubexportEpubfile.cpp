@@ -27,6 +27,11 @@ void EpubExportEpubfile::close()
 delete file;
 }
 
+void EpubExportEpubfile::add(QString filename, QString content)
+{
+    file->addString(filename, content, getDefaultCompressionLevel(true));
+}
+
 void EpubExportEpubfile::addUncompressed(QString filename, QString content)
 {
     file->addString(filename, content, getDefaultCompressionLevel(false));

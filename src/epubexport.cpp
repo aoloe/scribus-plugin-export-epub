@@ -5,6 +5,7 @@
 
 #include "module/epubexportScribusDoc.h"
 #include "module/epubexportEpubfile.h"
+#include "module/epubexportStructure.h"
 
 EpubExport::EpubExport()
 {
@@ -37,6 +38,24 @@ void EpubExport::doExport()
     EpubExportEpubfile* epub = new EpubExportEpubfile();
     epub->setFilename(options.targetFilename);
     epub->create();
+
+    /*
+    EpubExportStructure* structure = new EpubExportStructure();
+    structure->setFilename(options.targetFilename);
+    structure->readMetadata(doc->getMetadata());
+    */
+    EpubExportStructure structure;
+    structure.setFilename(options.targetFilename);
+    structure.readMetadata(doc->getMetadata());
+
+	epub->add("META-INF/container.xml", structure.getContainer());
+
+	epub->add("OEBPS/toc.ncx", structure.getNCX());
+
+	epub->add("OEBPS/content.opf", structure.getOPF());
+
+	epub->addUncompressed("OEBPS/Images/cover.png", structure.getCover());
+
     epub->close();
 }
 

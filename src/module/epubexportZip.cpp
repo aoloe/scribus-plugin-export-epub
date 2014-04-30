@@ -33,18 +33,8 @@ void EpubExportZip::addString(const QString& path, QByteArray& content, Compress
 
 void EpubExportZip::addString(const QString& path, QString& content, CompressionLevel level)
 {
-    /*
-    QString resourcePath = ":/resources/epubexport/stringtobezipped.txt";
-    QFile zipfile(resourcePath);
-    if(!zipfile.open(QFile::ReadOnly | QFile::Text)){
-        qDebug() << "could not open file for write";
-        return;
-    }
-    qDebug() << "writing addFile for QByteArray" << path;
-    addFile(path, resourcePath, level);
-    zipfile.close();
-    */
     // TODO: find a way to use in memory files... if not possible, maybe patch the zip library
+    // Qresources or named pipes might be the way to go (ale/20140430)
     QTemporaryDir dir;
     if (dir.isValid()) {
         // dir.path() returns the unique directory path

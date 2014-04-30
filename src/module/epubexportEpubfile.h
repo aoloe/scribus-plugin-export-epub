@@ -22,6 +22,7 @@ public:
     void create();
     void close();
 
+    void add(QString filename, QString content);
     void addUncompressed(QString filename, QString content);
 
 private:

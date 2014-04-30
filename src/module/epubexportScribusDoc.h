@@ -1,3 +1,7 @@
+/**
+ * EpubExportScribusDoc contains a reference to the current scribus document and is used as
+ * an interface to get information and parse the scribus document itself
+ */
 #ifndef EPUBEXPORTSCRIBUSDOC_H
 #define EPUBEXPORTSCRIBUSDOC_H
 
@@ -5,6 +9,8 @@
 #include <QDebug>
 
 class ScribusDoc;
+
+class EpubExportStructureMetadata;
 
 class EpubExportScribusDoc : public QObject
 {
@@ -14,9 +20,11 @@ public:
 	EpubExportScribusDoc();
 	~EpubExportScribusDoc();
 
-    void set(ScribusDoc* doc) {this->doc = doc;}
+    void set(ScribusDoc* scribusDoc) {this->scribusDoc = scribusDoc;}
+
+    EpubExportStructureMetadata getMetadata();
 private:
-    ScribusDoc* doc;
+    ScribusDoc* scribusDoc;
 };
 
 QDebug operator<<(QDebug dbg, const EpubExportScribusDoc &scribusDoc);
