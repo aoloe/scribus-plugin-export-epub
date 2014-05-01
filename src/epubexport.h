@@ -10,8 +10,6 @@
 class ScribusDoc;
 class MultiProgressDialog;
 
-class EpubExportScribusDoc;
-
 struct EpubExportOptions
 {
     QString targetFilename;
@@ -38,12 +36,12 @@ public:
 	~EpubExport();
 
 	EpubExportOptions options;
-    void setOptions(EpubExportOptions options) {this->options = options;}
+    void setOptions(EpubExportOptions options) { this->options = options; }
 
-    void addScribusDocument(ScribusDoc* doc);
+    void setScribusDocument(ScribusDoc* scribusDoc) { this->scribusDoc = scribusDoc; }
 	void doExport();
 
-    void setProgressDialog(MultiProgressDialog* dialog) {progressDialog = dialog;}
+    void setProgressDialog(MultiProgressDialog* dialog) { progressDialog = dialog; }
 
 public slots:
     void cancelRequested();
@@ -51,7 +49,7 @@ public slots:
 private:
     MultiProgressDialog* progressDialog;
 
-    EpubExportScribusDoc* doc;
+    ScribusDoc* scribusDoc;
 
 };
 

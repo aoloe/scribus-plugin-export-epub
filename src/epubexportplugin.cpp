@@ -106,7 +106,7 @@ bool EpubExportPlugin::run(ScribusDoc* doc, QString target)
             qApp->processEvents();
             epubexport->setProgressDialog(progressDialog);
 
-            epubexport->addScribusDocument(currDoc);
+            epubexport->setScribusDocument(currDoc);
             epubexport->setOptions(options);
             epubexport->doExport();
 

@@ -6,13 +6,12 @@
 #include "module/epubexportScribusDoc.h"
 #include "module/epubexportEpubfile.h"
 #include "module/epubexportStructure.h"
+#include "module/epubexportContent.h"
 
 EpubExport::EpubExport()
 {
     // progressDialog = 0;
     // itemNumber = 0;
-
-    this->doc = new EpubExportScribusDoc();
 
     // qDebug() << "marksList" << this->doc->get()->marksList();
     // qDebug() << "notesList" << this->doc->get()->notesList();
@@ -20,12 +19,6 @@ EpubExport::EpubExport()
 
 EpubExport::~EpubExport()
 {
-}
-
-void EpubExport::addScribusDocument(ScribusDoc* scribusDoc)
-{
-    this->doc->set(scribusDoc);
-
 }
 
 void EpubExport::doExport()
@@ -39,24 +32,33 @@ void EpubExport::doExport()
     epub->setFilename(options.targetFilename);
     epub->create();
 
+
+    EpubExportScribusDoc* scribusDocument = new EpubExportScribusDoc();
+    scribusDocument->set(this->scribusDoc);
+    scribusDocument->setPageRange(this->options.pageRange);
+    scribusDocument->readItems();
+
     /*
     EpubExportStructure* structure = new EpubExportStructure();
     structure->setFilename(options.targetFilename);
     structure->readMetadata(doc->getMetadata());
     */
-    EpubExportStructure structure;
-    structure.setFilename(options.targetFilename);
-    structure.readMetadata(doc->getMetadata());
+    EpubExportStructure* structure = new EpubExportStructure();
+    structure->setFilename(options.targetFilename);
+    structure->readMetadata(scribusDocument->getMetadata());
 
-	epub->add("META-INF/container.xml", structure.getContainer());
+    EpubExportContent* content = new EpubExportContent();
+    content->setDocument(scribusDocument);
 
-	epub->add("OEBPS/toc.ncx", structure.getNCX());
+	epub->add("META-INF/container.xml", structure->getContainer());
 
-	epub->add("OEBPS/content.opf", structure.getOPF());
+	epub->add("OEBPS/toc.ncx", structure->getNCX());
 
-    if (structure.hasCover())
+	epub->add("OEBPS/content.opf", structure->getOPF());
+
+    if (structure->hasCover())
     {
-        epub->addUncompressed("OEBPS/Images/cover.png", structure.getCover());
+        epub->addUncompressed("OEBPS/Images/cover.png", structure->getCover());
     }
 
     epub->close();
