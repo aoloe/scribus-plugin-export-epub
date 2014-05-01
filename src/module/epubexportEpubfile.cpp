@@ -1,5 +1,7 @@
 #include <QDebug>
 
+#include <QByteArray>
+
 #include "module/epubexportEpubfile.h"
 
 #include "module/epubexportZip.h"
@@ -35,6 +37,11 @@ void EpubExportEpubfile::add(QString filename, QString content)
 void EpubExportEpubfile::addUncompressed(QString filename, QString content)
 {
     file->addString(filename, content, getDefaultCompressionLevel(false));
+}
+
+void EpubExportEpubfile::addUncompressed(QString filename, QByteArray content)
+{
+    file->addByteArray(filename, content, getDefaultCompressionLevel(false));
 }
 
 QDebug operator<<(QDebug dbg, const EpubExportEpubfile &epub)

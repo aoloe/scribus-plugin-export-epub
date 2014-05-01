@@ -56,13 +56,13 @@ void EpubExportStructure::readMetadata(EpubExportStructureMetadata metadata)
 		metadata.date = QDate::currentDate().toString(Qt::ISODate);
 }
 
-void EpubExportStructure::addContent(QString id, QString path, QString mediatype)
+void EpubExportStructure::addToManifest(QString id, QString path, QString mediatype)
 {
-        EpubExportStructureContent content = EpubExportStructureContent();
-        content.id = id;
-        content.filename = path;
-        content. mediatype = mediatype;
-        addContent(content);
+    EpubExportStructureManifestItem item;
+    item.id = id;
+    item.filename = path;
+    item. mediatype = mediatype;
+    addToManifest(item);
 }
 
 /**
@@ -234,6 +234,8 @@ QString EpubExportStructure::getOPF()
         elementMetadata.appendChild(element);
 	}
 
+
+    // if no cover image exists, create it as a screenshot of the first page
 	element = xmlDocument.createElement("meta");
 	// element.setAttribute("properties", "cover-image");
 	element.setAttribute("content", "cover.png");
@@ -244,12 +246,12 @@ QString EpubExportStructure::getOPF()
 	xmlRoot.appendChild(manifest);
 
 	// dynamically add the content items (contentItems.add(EPUBExportContentItem))
-    foreach (EpubExportStructureContent contentItem, content)
+    foreach (EpubExportStructureManifestItem item, this->manifest)
 	{
 		element = xmlDocument.createElement("item");
-		element.setAttribute("id", contentItem.id);
-		element.setAttribute("href", contentItem.href);
-		element.setAttribute("media-type", contentItem.mediatype);
+		element.setAttribute("id", item.id);
+		element.setAttribute("href", item.href);
+		element.setAttribute("media-type", item.mediatype);
 		manifest.appendChild(element);
 	}
 
@@ -266,7 +268,7 @@ QString EpubExportStructure::getOPF()
 	spine.setAttribute("toc", "ncx");
 	xmlRoot.appendChild(spine);
 
-    foreach (EpubExportStructureContent contentItem, content)
+    foreach (EpubExportStructureManifestItem item, this->manifest)
     {
 		element = xmlDocument.createElement("itemref");
 		element.setAttribute("idref", filename);
@@ -372,12 +374,12 @@ QString EpubExportStructure::getNCX()
 	QDomElement nav = xmlDocument.createElement("navMap");
 	xmlRoot.appendChild(nav);
 
-    int i = 0; // TODO: shouldn't i be in EpubExportStructureContent?
-    foreach (EpubExportStructureContent contentItem, content)
+    int i = 0; // TODO: shouldn't i be in EpubExportStructureManifestItem?
+    foreach (EpubExportStructureManifestItem item, manifest)
     {
 		QDomElement navPoint = xmlDocument.createElement("navPoint");
 		navPoint.setAttribute("class", "chapter");
-		navPoint.setAttribute("id", contentItem.filename);
+		navPoint.setAttribute("id", item.filename);
 		navPoint.setAttribute("playOrder", i + 1);
 		nav.appendChild(navPoint);
 
@@ -385,11 +387,11 @@ QString EpubExportStructure::getNCX()
 		navPoint.appendChild(element);
 		elementText = xmlDocument.createElement("text");
 		element.appendChild(elementText);
-		text = xmlDocument.createTextNode(contentItem.title);
+		text = xmlDocument.createTextNode(item.title);
 		elementText.appendChild(text);
 
 		element = xmlDocument.createElement("content");
-		element.setAttribute("src", "Text/" + contentItem.filename);
+		element.setAttribute("src", "Text/" + item.filename);
 		navPoint.appendChild(element);
         i++;
 	}
@@ -462,13 +464,13 @@ QDebug operator<<(QDebug dbg, const EpubExportStructureMetadata &metadata)
                   << " )";
     return dbg.space();
 }
-QDebug operator<<(QDebug dbg, const EpubExportStructureContent &content)
+QDebug operator<<(QDebug dbg, const EpubExportStructureManifestItem &item)
 {
-    dbg.nospace() << "( title:" << content.title << "\n"
-                  << ", id:" << content.id << "\n"
-                  << ", href:" << content.href << "\n"
-                  << ", mediatype:" << content.mediatype << "\n"
-                  << ", title:" << content.title << "\n"
+    dbg.nospace() << "( title:" << item.title << "\n"
+                  << ", id:" << item.id << "\n"
+                  << ", href:" << item.href << "\n"
+                  << ", mediatype:" << item.mediatype << "\n"
+                  << ", title:" << item.title << "\n"
                   << " )";
     return dbg.space();
 }

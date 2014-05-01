@@ -52,3 +52,24 @@ void EpubExportZip::addString(const QString& path, QString& content, Compression
         }
     }
 }
+
+void EpubExportZip::addByteArray(const QString& path, QByteArray& content, CompressionLevel level)
+{
+    // TODO: find a way to use in memory files... if not possible, maybe patch the zip library
+    // Qresources or named pipes might be the way to go (ale/20140430)
+    QTemporaryDir dir;
+    if (dir.isValid()) {
+        // dir.path() returns the unique directory path
+        QFileInfo fileinfo(path);
+        QString filename = QDir(dir.path()).filePath(fileinfo.fileName());
+        // qDebug() << "filename" << filename;
+        QFile file(filename);
+        if (file.open(QFile::WriteOnly)) {
+            file.write(content);
+            file.close();
+            addFile(filename, fileinfo.path(), level);
+        } else {
+            qDebug() << "could not open temporary file" << file.fileName();
+        }
+    }
+}

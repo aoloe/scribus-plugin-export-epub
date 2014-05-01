@@ -15,6 +15,7 @@ public:
     void addString(const QString& path, QByteArray& content);
     void addString(const QString& path, QByteArray& content, CompressionLevel level);
     void addString(const QString& path, QString& content, CompressionLevel level);
+    void addByteArray(const QString& path, QByteArray& content, CompressionLevel level);
 };
 
 #endif // EPUBEXPORTZIP_H

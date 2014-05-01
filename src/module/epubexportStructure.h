@@ -73,7 +73,7 @@ struct EpubExportStructureMetadata
     }
 };
 
-struct EpubExportStructureContent
+struct EpubExportStructureManifestItem
 {
     QString id;
     QString href;
@@ -81,7 +81,7 @@ struct EpubExportStructureContent
     int section; // TODO: not filled yet: fill this instead of xhtmlFile
     QString title; // TODO: not filled yet: fill this instead of xhtmlFile
     QString filename; // TODO: not filled yet: fill this instead of xhtmlFile
-    EpubExportStructureContent()
+    EpubExportStructureManifestItem()
     {
         id = "";
         filename = "";
@@ -105,24 +105,23 @@ public:
 	EpubExportStructureMetadata getMetadata() {return metadata;}
 
 	void setFilename(QString filename) {this->filename = filename;}
-	void addContent(EpubExportStructureContent content) {this->content.append(content);}
-	void addContent(QString id, QString path, QString mediatype);
+	void addToManifest(EpubExportStructureManifestItem item) {this->manifest.append(item);}
+	void addToManifest(QString id, QString path, QString mediatype);
     QString getOPF();
     QString getNCX();
     QString getContainer();
 	void setCover(QByteArray cover) {this->cover = cover;}
-    bool hasCover() {return this->cover.isEmpty();}
+    bool hasCover() {return !this->cover.isEmpty();}
     QByteArray getCover();
 private:
     EpubExportStructureMetadata metadata;
     QString filename;
-    // QVector<EPUBExportContentItem> contentItems;
-    QVector<EpubExportStructureContent> content;
+    QVector<EpubExportStructureManifestItem> manifest;
     QByteArray cover; // byte representation of the cover image
 };
 
 QDebug operator<<(QDebug dbg, const EpubExportStructure &structure);
 QDebug operator<<(QDebug dbg, const EpubExportStructureMetadata &metadata);
-QDebug operator<<(QDebug dbg, const EpubExportStructureContent &content);
+QDebug operator<<(QDebug dbg, const EpubExportStructureManifestItem &item);
 
 #endif // EPUBEXPORTSTRUCTURE_H

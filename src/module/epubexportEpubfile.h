@@ -7,6 +7,8 @@
 #include <QObject>
 #include <QDebug>
 
+class QByteArray;
+
 #include "module/epubexportZip.h"
 
 class EpubExportEpubfile : public QObject
@@ -24,6 +26,7 @@ public:
 
     void add(QString filename, QString content);
     void addUncompressed(QString filename, QString content);
+    void addUncompressed(QString filename, QByteArray content);
 
 private:
 	EpubExportZip *file;

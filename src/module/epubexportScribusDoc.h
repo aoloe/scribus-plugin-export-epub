@@ -35,6 +35,8 @@ public:
     EpubExportStructureMetadata getMetadata();
 
     void readItems();
+    QString getStylesAsCss();
+    QByteArray getFirstPageAsCoverImage();
 
     int getPageCount() { return this->scribusDoc->DocPages.count(); }
 private:
@@ -43,9 +45,15 @@ private:
     QList<int> pageRange; // from the options
 
     QVector< QList<PageItem*> > items;
+
+    QString getStylenameSanitized(QString stylename);
+
+    // ==== functions to be moved to scribusDoc? =====
     QList<ScPage *> getPagesWithItem(PageItem* item);
     QRect getPageRect(const ScPage* page);
     MarginStruct getPageBleeds(const ScPage* page);
+    bool isPortrait(const ScPage* page);
+
 };
 
 QDebug operator<<(QDebug dbg, const EpubExportScribusDoc &scribusDoc);

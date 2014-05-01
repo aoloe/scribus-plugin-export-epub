@@ -1,9 +1,14 @@
 #include <QDebug>
 
+#include <QImage> // for the cover
+#include <QByteArray> // for the cover
+#include <QBuffer> // for the cover
+
 #include "module/epubexportScribusDoc.h"
 #include "module/epubexportStructure.h"
 
 #include "scribusdoc.h"
+#include "scribusview.h" // for the cover
 #include "scribusstructs.h" // for getPageRect() remove it, it's moved to ScPage
 
 EpubExportScribusDoc::EpubExportScribusDoc()
@@ -43,6 +48,184 @@ EpubExportStructureMetadata EpubExportScribusDoc::getMetadata()
 
     return metadata;
 }
+
+/**
+  * add OEBPS/Styles/style.css to the current epub file
+  */ 
+QString EpubExportScribusDoc::getStylesAsCss()
+{
+    int n = 0;
+    QString wr = QString();
+
+    const StyleSet<ParagraphStyle>* paragraphStyles = & scribusDoc->paragraphStyles();
+    n = paragraphStyles->count();
+    // qDebug() << "n pstyle: " << n;
+    for (int i = 0; i < n; ++i )
+    {
+        // for a list of properties:  grep -r "paragraphStyle()" . | vim -
+        // for a list of properties:  grep -r "charStyle()" . | vim -
+        // see fileloader/scribus150format/scribus150format_save.cpp
+        ParagraphStyle paragraphStyle = (*paragraphStyles)[i];
+        CharStyle charStyle = paragraphStyle.charStyle();
+        wr += "p." + getStylenameSanitized(paragraphStyle.name()) + "{\n";
+        // qDebug() << "style name: " << paragraphStyle.name();
+        // qDebug() << "style alignment: " << paragraphStyle.alignment();
+        // qDebug() << "style font: " << charStyle.font().scName();
+        // line height: fixed (<- baseline) or auto
+        // alignment
+        // evt. tabs for lists
+        // left right and first indents
+        wr += "    padding-top:" + QString::number(paragraphStyle.gapBefore()) + "pt;\n";
+        wr += "    padding-bottom:" + QString::number(paragraphStyle.gapAfter()) + "pt;\n";
+
+        wr += "    font-size:" + QString::number(charStyle.fontSize() / 10) + "pt;\n";
+        QString fontname = charStyle.font().scName();
+        // as long as bold and italic are not in the features list, get the property
+        // by guessing from the font name (ale/20120916)
+        // rule.pattern = QRegExp("[\\\\|\\<|\\>|\\=|\\!|\\+|\\-|\\*|\\/|\\%]+");
+        QRegExp regexpItalic("(\\bitalic\\b)");
+        regexpItalic.setCaseSensitivity(Qt::CaseInsensitive);
+        if (regexpItalic.indexIn(fontname) >= 0)
+        {
+            wr += "    font-variant:italic;\n";
+        } QRegExp regexpBold("(\\bbold\\b)"); // TODO: add other keywords for bold
+        regexpBold.setCaseSensitivity(Qt::CaseInsensitive);
+        if (regexpBold.indexIn(fontname) >= 0)
+        {
+            wr += "    font-weight:bold;\n"; // TODO: add other keywords for italic
+        }
+
+        QStringList featureList = charStyle.features();
+        QStringList::ConstIterator it;
+        for (it = featureList.begin(); it != featureList.end(); ++it)
+        {
+            QString feature = it->trimmed();
+            // qDebug() << "feature" << feature;
+            if ((feature == CharStyle::UNDERLINE) || (feature == CharStyle::UNDERLINEWORDS))
+                wr += "    text-decoration:underline;\n";
+            else if (feature == CharStyle::STRIKETHROUGH)
+                wr += "    text-decoration:line-through;\n";
+        }
+
+        // paragraphStyle.hasDropCap()
+        // paragraphStyle.dcCharStyleName();
+        // paragraphStyle.dropCapOffset());
+
+        // font family + style!
+        // tracking and width space
+        // underline
+        // stroke
+        // horizontal / vertical scaling
+        // color
+
+        // charStyle.name();
+        // charStyle.parent();
+        // charStyle.font().scName()
+        // charStyle.features().join(" ")
+        // charStyle.fillColor();
+        // charStyle.fillShade();
+        // charStyle.strokeColor();
+        // charStyle.strokeShade();
+        // charStyle.shadowXOffset() / 10.0
+        // charStyle.shadowYOffset() / 10.0
+        // charStyle.outlineWidth() / 10.0
+        // charStyle.underlineOffset() / 10.0
+        // charStyle.underlineWidth() / 10.0
+        // charStyle.strikethruOffset() / 10.0
+        // charStyle.strikethruWidth() / 10.0
+        // charStyle.scaleH() / 10.0
+        // charStyle.scaleV() / 10.0
+        // charStyle.baselineOffset() / 10.0
+        // charStyle.language();
+        // qDebug() << "charStyle font size: " << charStyle.fontSize();
+        wr += "}\n";
+    }
+
+    const StyleSet<CharStyle>* charStyles = & scribusDoc->charStyles();
+    n = charStyles->count();
+    // qDebug() << "n cstyle: " << n;
+    for (int i = 0; i < n; ++i )
+    {
+        CharStyle charStyle = (*charStyles)[i];
+        wr += "span." + getStylenameSanitized(charStyle.name()) + "{\n";
+        // qDebug() << "style name: " << charStyle.name();
+        // qDebug() << "style font: " << charStyle.font().scName();
+        wr += "    font-size:" + QString::number(charStyle.fontSize() / 10) + "pt;\n";
+        // qDebug() << "style font size: " << charStyle.fontSize();
+        wr += "}\n";
+    }
+    //
+    // add epub exporter related styles (must be included in the imported css if one is imported
+    // (or check if the exist?)
+    wr += "div.picture{\n";
+    // qDebug() << "style name: " << paragraphStyle.name();
+    // qDebug() << "style alignment: " << paragraphStyle.alignment();
+    // qDebug() << "style font: " << charStyle.font().scName();
+    // line height: fixed (<- baseline) or auto
+    // alignment
+    // evt. tabs for lists
+    // left right and first indents
+    wr += "    text-align:left;\n";
+    wr += "    page-break-before:always;\n";
+    wr += "    page-break-inside:avoid;\n";
+    wr += "}\n";
+
+    /*
+    // write the stylesheet
+    epubFile->add("OEBPS/Styles/style.css", wr, true);
+
+    struct EPUBExportContentItem contentItem;
+    contentItem.id = "stylesheet";
+    contentItem.href = "Styles/style.css";
+    contentItem.mediaType = "text/css";
+    contentItems.append(contentItem);
+    */
+
+    /*
+    docu.writeAttribute("VHOCH"  , doc->typographicPrefs().valueSuperScript);
+    docu.writeAttribute("VHOCHSC", doc->typographicPrefs().scalingSuperScript);
+    docu.writeAttribute("VTIEF"  , doc->typographicPrefs().valueSubScript);
+    docu.writeAttribute("VTIEFSC", doc->typographicPrefs().scalingSubScript);
+    docu.writeAttribute("VKAPIT" , doc->typographicPrefs().valueSmallCaps);
+    docu.writeAttribute("LANGUAGE", doc->hyphLanguage());
+     */
+     // qDebug() << "wr" << wr;
+     return wr;
+}
+
+/**
+ * create a cover as a png of the first page of the .sla
+ * From the Sigil documentation:
+ * - Image size should be 590 pixels wide x 750 pixels high
+ * - Image resolution should be 72 pixels per inch (ppi) or higher
+ * - Use color images, saved in RGB color space
+ * - Image format can be JPEG, GIF, or PNG.
+ * TODO:
+ * - make sure that a cover.png image does not yet exist
+ * - create an xhtml file with the cover?
+ *   http://blog.threepress.org/2009/11/20/best-practices-in-epub-cover-images/
+ */
+QByteArray EpubExportScribusDoc::getFirstPageAsCoverImage()
+{
+    QImage image;
+    if (this->isPortrait(scribusDoc->DocPages.at(0)))
+        image = scribusDoc->view()->PageToPixmap(0, 750, false);
+    else
+        image = scribusDoc->view()->PageToPixmap(590, 0, false);
+
+    QByteArray bytearray;
+    QBuffer buffer(&bytearray);
+    buffer.open(QIODevice::WriteOnly);
+    image.save(&buffer, "PNG");
+    // qDebug() << "image.size" << image.size();
+    return bytearray;
+}
+
+QString EpubExportScribusDoc::getStylenameSanitized(QString stylename)
+{
+    return stylename.remove(QRegExp("[^a-zA-Z\\d_-]"));
+}
+
 
 
 /* =====================================================================================
@@ -172,4 +355,9 @@ MarginStruct EpubExportScribusDoc::getPageBleeds(const ScPage* page)
     MarginStruct result;
     scribusDoc->getBleeds(page, result);
     return result;
+}
+
+bool EpubExportScribusDoc::isPortrait(const ScPage* page)
+{
+        return (static_cast<int>(page->width()) >= static_cast<int>(page->width()));
 }

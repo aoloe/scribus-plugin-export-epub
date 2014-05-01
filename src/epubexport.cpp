@@ -38,14 +38,12 @@ void EpubExport::doExport()
     scribusDocument->setPageRange(this->options.pageRange);
     scribusDocument->readItems();
 
-    /*
-    EpubExportStructure* structure = new EpubExportStructure();
-    structure->setFilename(options.targetFilename);
-    structure->readMetadata(doc->getMetadata());
-    */
     EpubExportStructure* structure = new EpubExportStructure();
     structure->setFilename(options.targetFilename);
     structure->readMetadata(scribusDocument->getMetadata());
+
+    epub->add("OEBPS/Styles/style.css", scribusDocument->getStylesAsCss());
+    structure->addToManifest("stylesheet", "Styles/style.css", "text/css");
 
     EpubExportContent* content = new EpubExportContent();
     content->setDocument(scribusDocument);
@@ -58,7 +56,17 @@ void EpubExport::doExport()
 
     if (structure->hasCover())
     {
+        qDebug() << "has cover";
         epub->addUncompressed("OEBPS/Images/cover.png", structure->getCover());
+    } else {
+        epub->addUncompressed("OEBPS/Images/cover.png", scribusDocument->getFirstPageAsCoverImage());
+        /*
+        struct EPUBExportContentItem contentItem;
+        contentItem.id = "cover.png";
+        contentItem.href = "Images/cover.png";
+        contentItem.mediaType = "image/png";
+        contentItems.append(contentItem);
+        */
     }
 
     epub->close();
