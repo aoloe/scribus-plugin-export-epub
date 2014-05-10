@@ -23,10 +23,13 @@ EpubExport::~EpubExport()
 
 void EpubExport::doExport()
 {
-    qDebug() << "options" << options;
+    // qDebug() << "options" << options;
 
-	options.targetFilename = "/tmp/"+options.targetFilename;
-	qDebug() << "forcing the output of the .epub file to /tmp";
+    if (QDir::homePath() == "/home/ale")
+    {
+        options.targetFilename = "/tmp/"+options.targetFilename;
+        qDebug() << "forcing the output of the .epub file to /tmp";
+    }
 
     EpubExportEpubfile* epub = new EpubExportEpubfile();
     epub->setFilename(options.targetFilename);
@@ -48,26 +51,24 @@ void EpubExport::doExport()
     EpubExportContent* content = new EpubExportContent();
     content->setDocument(scribusDocument);
 
+    // TODO: check if there is a better way to fill the epub (more flexible and which better
+    // shows in here what is going on
+    content->fillEpub(epub, structure);
+
+    if (structure->hasCover())
+    {
+        // TODO: implement a way to set the cover
+        epub->addUncompressed("OEBPS/Images/cover.png", structure->getCover());
+    } else {
+        epub->addUncompressed("OEBPS/Images/cover.png", scribusDocument->getFirstPageAsCoverImage());
+    }
+    structure->addToManifest("cover.png", "Images/cover.png", "image/png");
+
 	epub->add("META-INF/container.xml", structure->getContainer());
 
 	epub->add("OEBPS/toc.ncx", structure->getNCX());
 
 	epub->add("OEBPS/content.opf", structure->getOPF());
-
-    if (structure->hasCover())
-    {
-        qDebug() << "has cover";
-        epub->addUncompressed("OEBPS/Images/cover.png", structure->getCover());
-    } else {
-        epub->addUncompressed("OEBPS/Images/cover.png", scribusDocument->getFirstPageAsCoverImage());
-        /*
-        struct EPUBExportContentItem contentItem;
-        contentItem.id = "cover.png";
-        contentItem.href = "Images/cover.png";
-        contentItem.mediaType = "image/png";
-        contentItems.append(contentItem);
-        */
-    }
 
     epub->close();
 }

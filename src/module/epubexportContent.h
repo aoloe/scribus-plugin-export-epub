@@ -9,6 +9,9 @@
 
 #include "module/epubexportScribusDoc.h"
 
+class EpubExportEpubfile;
+class EpubExportStructure;
+
 class EpubExportContent : public QObject
 {
     Q_OBJECT
@@ -18,6 +21,8 @@ public:
 	~EpubExportContent();
 
     void setDocument(EpubExportScribusDoc* scribusDocument) { this->scribusDocument = scribusDocument; }
+
+    void fillEpub(EpubExportEpubfile* epub, EpubExportStructure* structure);
 
 private:
     EpubExportScribusDoc* scribusDocument;
