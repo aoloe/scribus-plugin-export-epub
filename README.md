@@ -16,9 +16,14 @@ Clone the `scribus-plugin-export-plugin` repository and put – or symlink – i
 
 to `CMakeList.txt` file in `scribus/plugins/export/`.
 
-## Todo
+## TODO
 
+- get the text and its formatting to correctly export
+
+
+## Inherited TODO
 This todo list is taken from the older Epub plugin project and is not fully checked yet.
+
 
 ### ASAP
 
