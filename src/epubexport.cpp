@@ -3,7 +3,7 @@
 #include "epubexport.h"
 #include "scribusdoc.h"
 
-#include "module/epubexportScribusDoc.h"
+#include "module/epubexportScribusDocument.h"
 #include "module/epubexportEpubfile.h"
 #include "module/epubexportStructure.h"
 #include "module/epubexportContent.h"
@@ -36,10 +36,11 @@ void EpubExport::doExport()
     epub->create();
 
 
-    EpubExportScribusDoc* scribusDocument = new EpubExportScribusDoc();
+    EpubExportScribusDocument* scribusDocument = new EpubExportScribusDocument();
     scribusDocument->set(this->scribusDoc);
     scribusDocument->setPageRange(this->options.pageRange);
     scribusDocument->readItems();
+    scribusDocument->readSections();
 
     EpubExportStructure* structure = new EpubExportStructure();
     structure->setFilename(options.targetFilename);

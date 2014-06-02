@@ -3,23 +3,25 @@
 #include <QImage> // for the cover
 #include <QByteArray> // for the cover
 #include <QBuffer> // for the cover
+#include <QVectorIterator> // for sorting the items on the page
 
-#include "module/epubexportScribusDoc.h"
+
+#include "module/epubexportScribusDocument.h"
 #include "module/epubexportStructure.h"
 
 #include "scribusdoc.h"
 #include "scribusview.h" // for the cover
 #include "scribusstructs.h" // for getPageRect() remove it, it's moved to ScPage
 
-EpubExportScribusDoc::EpubExportScribusDoc()
+EpubExportScribusDocument::EpubExportScribusDocument()
 {
 }
 
-EpubExportScribusDoc::~EpubExportScribusDoc()
+EpubExportScribusDocument::~EpubExportScribusDocument()
 {
 }
 
-EpubExportStructureMetadata EpubExportScribusDoc::getMetadata()
+EpubExportStructureMetadata EpubExportScribusDocument::getMetadata()
 {
     EpubExportStructureMetadata metadata = EpubExportStructureMetadata();
 	DocumentInformation documentMetadata = this->scribusDoc->documentInfo();
@@ -52,7 +54,7 @@ EpubExportStructureMetadata EpubExportScribusDoc::getMetadata()
 /**
   * add OEBPS/Styles/style.css to the current epub file
   */ 
-QString EpubExportScribusDoc::getStylesAsCss()
+QString EpubExportScribusDocument::getStylesAsCss()
 {
     int n = 0;
     QString wr = QString();
@@ -205,7 +207,7 @@ QString EpubExportScribusDoc::getStylesAsCss()
  * - create an xhtml file with the cover?
  *   http://blog.threepress.org/2009/11/20/best-practices-in-epub-cover-images/
  */
-QByteArray EpubExportScribusDoc::getFirstPageAsCoverImage()
+QByteArray EpubExportScribusDocument::getFirstPageAsCoverImage()
 {
     QImage image;
     if (this->isPortrait(scribusDoc->DocPages.at(0)))
@@ -221,7 +223,7 @@ QByteArray EpubExportScribusDoc::getFirstPageAsCoverImage()
     return bytearray;
 }
 
-QString EpubExportScribusDoc::getStylenameSanitized(QString stylename)
+QString EpubExportScribusDocument::getStylenameSanitized(QString stylename)
 {
     return stylename.remove(QRegExp("[^a-zA-Z\\d_-]"));
 }
@@ -235,9 +237,10 @@ QString EpubExportScribusDoc::getStylenameSanitized(QString stylename)
 
 /**
  * go through the full items list in the document and add a reference of the printable ones
- * in a list sorted by page
+ * in a list sorted by page and by placement on the page.
+ * TODO: correctly handle the page ranges (from .. to)
  */
-void EpubExportScribusDoc::readItems()
+void EpubExportScribusDocument::readItems()
 {
     QList<int> layerNotPrintable;
     foreach(ScLayer layer, scribusDoc->Layers)
@@ -261,7 +264,50 @@ void EpubExportScribusDoc::readItems()
         items[itemPages.first()->pageNr()].append(docItem);
         // itemCounter++; eventually, for the progress bar... but we should probably count the pages
     }
+
+    for (int i = 0; i < items.count(); i++)
+        qSort(items[i].begin(), items[i].end(), EpubExportScribusDocument::isDocItemTopLeftLessThan);
+
     qDebug() << "items:" << items;
+}
+
+/**
+ * used by qSort to sort the items by their place on the page
+ * TODO: as soon as other write directions are to be considered the order has to be made more flexible
+ * TODO: rename this!
+ */
+bool EpubExportScribusDocument::isDocItemTopLeftLessThan(const PageItem *docItem1, const PageItem *docItem2)
+{
+    return (docItem1->gXpos < docItem2->gXpos) ||
+           ((docItem1->gXpos == docItem2->gXpos) && (docItem1->gYpos < docItem2->gYpos));
+}
+
+
+void EpubExportScribusDocument::readSections()
+{
+
+    bool allPages = pageRange.isEmpty();
+    int n = allPages ? getPageCount() : pageRange.count();
+    int nSections = getSectionCount();
+    sections.resize(nSections);
+    for (int i = 0; i < n; ++i)
+    {
+        int sectionId = scribusDoc->getSectionKeyForPageIndex(i); // TODO: use the real page that we are handling
+        sections[sectionId].append(i);
+    }
+    qDebug() << "sections" << sections;
+}
+
+QList<ScPage*> EpubExportScribusDocument::getPagesList()
+{
+    QList<ScPage *> result;
+    bool allPages = pageRange.isEmpty();
+    int n = allPages ? getPageCount() : pageRange.count();
+    for (int i = 0; i < n; ++i)
+    {
+        result.append(scribusDoc->DocPages.at(allPages ? i : pageRange.at(i) - 1));
+    }
+    return result;
 }
 
 /**
@@ -275,7 +321,7 @@ void EpubExportScribusDoc::readItems()
  *   (According to jghali OwnPage should only be used make sense of the coordinates of an item,
  *   which are stored in relation to its own page)
  */
-QList<ScPage *> EpubExportScribusDoc::getPagesWithItem(PageItem* item)
+QList<ScPage *> EpubExportScribusDocument::getPagesWithItem(PageItem* item)
 {
     QList<ScPage *> result;
 
@@ -332,7 +378,7 @@ QList<ScPage *> EpubExportScribusDoc::getPagesWithItem(PageItem* item)
  * Add it as ScPage::getRect(const ScPage* page)
  * Eventually, rename to signify that it does not return xOffset, yOffset, ... but it adds the bleeds
  */
-QRect EpubExportScribusDoc::getPageRect(const ScPage* page)
+QRect EpubExportScribusDocument::getPageRect(const ScPage* page)
 {
     MarginStruct bleeds = getPageBleeds(page);
     return QRect(
@@ -350,14 +396,14 @@ QRect EpubExportScribusDoc::getPageRect(const ScPage* page)
  * Warning: in ScribusDoc there are also bleeds() methods that return the values without the facing
  * pages correction!
  */
-MarginStruct EpubExportScribusDoc::getPageBleeds(const ScPage* page)
+MarginStruct EpubExportScribusDocument::getPageBleeds(const ScPage* page)
 {
     MarginStruct result;
     scribusDoc->getBleeds(page, result);
     return result;
 }
 
-bool EpubExportScribusDoc::isPortrait(const ScPage* page)
+bool EpubExportScribusDocument::isPortrait(const ScPage* page)
 {
         return (static_cast<int>(page->width()) >= static_cast<int>(page->width()));
 }

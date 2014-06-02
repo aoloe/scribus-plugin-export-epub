@@ -19,6 +19,8 @@ to `CMakeList.txt` file in `scribus/plugins/export/`.
 ## TODO
 
 - get the text and its formatting to correctly export
+  - rename epubexportScribusDoc to epubexportScribusDocument
+  - create epubexportScribusDocumentItem as a proxy to PageItem
 
 
 ## Inherited TODO

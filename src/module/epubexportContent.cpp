@@ -7,6 +7,11 @@
 #include "module/epubexportEpubfile.h"
 #include "module/epubexportStructure.h"
 
+#include "module/epubexportScribusDocumentItem.h"
+
+#include "module/epubexportXhtml.h"
+
+
 EpubExportContent::EpubExportContent()
 {
 }
@@ -15,6 +20,39 @@ EpubExportContent::~EpubExportContent()
 {
 }
 
+/**
+ * for each section create an xhtml file that gets added to the epub file.
+ * the content is retrieved by looping through the pages and adding each item sequentially to the xhtml structure
+ */
 void EpubExportContent::fillEpub(EpubExportEpubfile* epub, EpubExportStructure* structure)
 {
+    // TODO: currently we are creating an xhtml file per section. as soon as a real TOC is available
+    // give a choice to use it, instead.
+    int sectionI = 0;
+    foreach(QList<int> section, scribusDocument->getSections())
+    {
+        sectionI++;
+        EpubExportXhtml xmlFile;
+        // TODO: get the information below from structure or anywhere else more appropriate...
+        xmlFile.initialize("en", "this document", "../Styles/style.css");
+
+        foreach (int page, section)
+        {
+            qDebug() << "page" << page;
+            // TODO: iterate throug the items and add each of them to the xhtml file
+            foreach (EpubExportScribusDocumentItem* item, scribusDocument->getPageItems(page))
+            {
+                // TODO: we probably need a EpubExportScribusDocumentItem as a proxy for the docItem 
+                qDebug() << "item" << item;
+            }
+        }
+        QString filename = QString("Section%1.xhtml").arg(sectionI, 4, 10, QChar('0'));
+        // TODO: as soon as we have a TOC, take the title from the text
+        QString title = QString("Section %1").arg(sectionI, 4, 10, QChar('0'));
+        // passing somethign else then -1 to toString() adds indenting line breaks. we prefer to manually add
+        // some breaks with getFixedXhtml()
+        // epubFile->add("OEBPS/Text/" + file.filename, getFixedXhtml(xhtmlDocument.toString(-1)), true);
+        epub->add("OEBPS/Text/" + filename, xmlFile.getString());
+        structure->addToManifest(filename, "Text/" + filename, "application/xhtml+xml");
+    }
 }
