@@ -239,6 +239,7 @@ QString EpubExportScribusDocument::getStylenameSanitized(QString stylename)
  * go through the full items list in the document and add a reference of the printable ones
  * in a list sorted by page and by placement on the page.
  * TODO: correctly handle the page ranges (from .. to)
+ * TODO: rename it to signify that it only reads visible items on a page (and make it a getter?)
  */
 void EpubExportScribusDocument::readItems()
 {
@@ -250,6 +251,7 @@ void EpubExportScribusDocument::readItems()
     int n = this->getPageCount();
     // qDebug() << "readItems n: " << n;
     items.resize(n);
+    EpubExportScribusDocumentItem documentItem;
 	foreach(PageItem* docItem, scribusDoc->DocItems)
     {
 		if (!docItem->printEnabled())
@@ -261,27 +263,17 @@ void EpubExportScribusDocument::readItems()
 		// if the item is not on a page, ignore it
         if (itemPages.empty())
 			continue;
-        items[itemPages.first()->pageNr()].append(docItem);
+
+        documentItem.setItem(docItem);
+        items[itemPages.first()->pageNr()].append(documentItem);
         // itemCounter++; eventually, for the progress bar... but we should probably count the pages
     }
 
     for (int i = 0; i < items.count(); i++)
-        qSort(items[i].begin(), items[i].end(), EpubExportScribusDocument::isDocItemTopLeftLessThan);
+        qSort(items[i].begin(), items[i].end(), EpubExportScribusDocumentItem::isBefore);
 
     qDebug() << "items:" << items;
 }
-
-/**
- * used by qSort to sort the items by their place on the page
- * TODO: as soon as other write directions are to be considered the order has to be made more flexible
- * TODO: rename this!
- */
-bool EpubExportScribusDocument::isDocItemTopLeftLessThan(const PageItem *docItem1, const PageItem *docItem2)
-{
-    return (docItem1->gXpos < docItem2->gXpos) ||
-           ((docItem1->gXpos == docItem2->gXpos) && (docItem1->gYpos < docItem2->gYpos));
-}
-
 
 void EpubExportScribusDocument::readSections()
 {

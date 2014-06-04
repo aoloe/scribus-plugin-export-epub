@@ -14,6 +14,8 @@
 
 #include "scribusdoc.h"
 
+#include "module/epubexportScribusDocumentItem.h"
+
 // class ScribusDoc;
 // class PageItem;
 class ScPage; // for getPageRect() remove it, it's moved to ScPage
@@ -52,7 +54,7 @@ private:
 
     QList<int> pageRange; // from the options
 
-    QVector< QList<PageItem*> > items;
+    QVector< QList<EpubExportScribusDocumentItem> > items;
     QVector< QList<int> > sections;
 
     QString getStylenameSanitized(QString stylename);

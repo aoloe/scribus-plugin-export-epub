@@ -9,6 +9,8 @@
 
 #include <QObject>
 
+#include "scribusdoc.h"
+
 class EpubExportScribusDocumentItem : public QObject
 {
     Q_OBJECT
@@ -16,6 +18,17 @@ class EpubExportScribusDocumentItem : public QObject
 public:
 	EpubExportScribusDocumentItem();
 	~EpubExportScribusDocumentItem();
+    void setItem(PageItem* item) { this->item = item; }
+    bool isBefore(const EpubExportScribusDocumentItem item);
+    /**
+     * used by qSort to sort the items by their place on the page
+     */
+    static bool isBefore(const EpubExportScribusDocumentItem item1, const EpubExportScribusDocumentItem item2) { return item1.isBefore(item2); }
+    int getX() { return this->item->gXpos; }
+    int getY() { return this->item->gYpos; }
+
+protected:
+    PageItem* item;
 };
 
 QDebug operator<<(QDebug dbg, const EpubExportScribusDocumentItem &scribusDocumentItem);

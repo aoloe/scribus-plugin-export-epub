@@ -43,7 +43,7 @@ void EpubExportContent::fillEpub(EpubExportEpubfile* epub, EpubExportStructure* 
             foreach (EpubExportScribusDocumentItem* item, scribusDocument->getPageItems(page))
             {
                 // TODO: we probably need a EpubExportScribusDocumentItem as a proxy for the docItem 
-                qDebug() << "item" << item;
+                // qDebug() << "item" << item;
             }
         }
         QString filename = QString("Section%1.xhtml").arg(sectionI, 4, 10, QChar('0'));
