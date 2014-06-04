@@ -23,7 +23,7 @@ public:
     /**
      * used by qSort to sort the items by their place on the page
      */
-    static bool isBefore(const EpubExportScribusDocumentItem item1, const EpubExportScribusDocumentItem item2) { return item1.isBefore(item2); }
+    bool isBefore(const EpubExportScribusDocumentItem& item1, const EpubExportScribusDocumentItem& item2) { return item1.isBefore(item2); }
     int getX() { return this->item->gXpos; }
     int getY() { return this->item->gYpos; }
 
