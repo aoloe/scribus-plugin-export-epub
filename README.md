@@ -1,7 +1,7 @@
 # scribus-plugin-export-epub
 
 
-epub export plugin for scribus
+Epub export plugin for scribus.
 
 This plugin is not a tool to design epub files, but it takes your SLA file (the scribus file) and exports all the content -- text with paragraph style, character styles, and some of the local formatting; images -- and packs it in a well formatted epub file.
 
@@ -15,6 +15,18 @@ Clone the `scribus-plugin-export-plugin` repository and put – or symlink – i
     ADD_SUBDIRECTORY(epub)
 
 to `CMakeList.txt` file in `scribus/plugins/export/`.
+
+## Samples
+
+You can submit samples .sla by forking
+
+https://github.com/aoloe/scribus-plugin-export-epub
+
+and adding a new directory in `test/samples/` with each sample (collected for output!).
+
+Please don't forget to add a `README.md` file explaining your sample is relevant and -- eventually -- an `.epub` file showing how the result should be.
+
+And, finally, just make a pull request to let me know about it!
 
 ## TODO
 
