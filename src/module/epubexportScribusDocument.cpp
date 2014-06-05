@@ -7,6 +7,7 @@
 
 
 #include "module/epubexportScribusDocument.h"
+#include "module/epubexportScribusDocumentItem.h"
 #include "module/epubexportStructure.h"
 
 #include "scribusdoc.h"
@@ -251,7 +252,6 @@ void EpubExportScribusDocument::readItems()
     int n = this->getPageCount();
     // qDebug() << "readItems n: " << n;
     items.resize(n);
-    EpubExportScribusDocumentItem documentItem;
 	foreach(PageItem* docItem, scribusDoc->DocItems)
     {
 		if (!docItem->printEnabled())
@@ -264,16 +264,30 @@ void EpubExportScribusDocument::readItems()
         if (itemPages.empty())
 			continue;
 
-        documentItem.setItem(docItem);
+        EpubExportScribusDocumentItem* documentItem = new EpubExportScribusDocumentItem();
+        documentItem->setItem(docItem);
         items[itemPages.first()->pageNr()].append(documentItem);
         // itemCounter++; eventually, for the progress bar... but we should probably count the pages
     }
 
     for (int i = 0; i < items.count(); i++)
-        qSort(items[i].begin(), items[i].end(), EpubExportScribusDocumentItem::isBefore);
+        // qSort(items[i].begin(), items[i].end(), EpubExportScribusDocument::isItemBefore);
+        qSort(items[i].begin(), items[i].end(), EpubExportScribusDocumentItem::isBeforeQSort);
 
     qDebug() << "items:" << items;
 }
+
+/**
+ * used by qSort to sort the items by their place on the page
+ * TODO: as soon as other write directions are to be considered the order has to be made more flexible
+ * TODO: rename this!
+ */
+/*
+bool EpubExportScribusDocument::isItemBefore(const EpubExportScribusDocumentItem item1, const EpubExportScribusDocumentItem item2)
+{
+    return true; // item1->isBefore(item2);
+}
+*/
 
 void EpubExportScribusDocument::readSections()
 {

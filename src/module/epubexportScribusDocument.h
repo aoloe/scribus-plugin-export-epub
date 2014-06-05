@@ -54,13 +54,14 @@ private:
 
     QList<int> pageRange; // from the options
 
-    QVector< QList<EpubExportScribusDocumentItem> > items;
+    QVector< QList<EpubExportScribusDocumentItem*> > items;
     QVector< QList<int> > sections;
 
     QString getStylenameSanitized(QString stylename);
 
 
     static bool isDocItemTopLeftLessThan(const PageItem *docItem1, const PageItem *docItem2);
+    static bool isItemBefore(const EpubExportScribusDocumentItem& item1, const EpubExportScribusDocumentItem& item2);
 
     // ==== functions to be moved to scribusDoc? =====
     QList<ScPage *> getPagesWithItem(PageItem* item);

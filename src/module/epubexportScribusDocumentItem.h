@@ -19,11 +19,11 @@ public:
 	EpubExportScribusDocumentItem();
 	~EpubExportScribusDocumentItem();
     void setItem(PageItem* item) { this->item = item; }
-    bool isBefore(const EpubExportScribusDocumentItem item);
+    bool isBefore(EpubExportScribusDocumentItem* item);
     /**
      * used by qSort to sort the items by their place on the page
      */
-    bool isBefore(const EpubExportScribusDocumentItem& item1, const EpubExportScribusDocumentItem& item2) { return item1.isBefore(item2); }
+    static bool isBeforeQSort(const EpubExportScribusDocumentItem* item1, const EpubExportScribusDocumentItem* item2) { return true; } // item1.isBefore(item2); }
     int getX() { return this->item->gXpos; }
     int getY() { return this->item->gYpos; }
 
