@@ -28,6 +28,12 @@ Please don't forget to add a `README.md` file explaining your sample is relevant
 
 And, finally, just make a pull request to let me know about it!
 
+PLEASE:
+
+- don't submit files that you don't want to see published on the internet and
+- try to keep the files as simple as possible and
+- submit one sample file per case.
+
 ## TODO
 
 - get the text and its formatting to correctly export
