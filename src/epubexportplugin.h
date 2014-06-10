@@ -1,10 +1,10 @@
-/**
+ /**
  * This is the entry point for the plugin.
  * All the methods defined here are called by Scribus' plugin execution code.
  */
 
-#ifndef EPUBEXPPORTPLUGIN_H
-#define EPUBEXPPORTPLUGIN_H
+#ifndef EPUBEXPORTPLUGIN_H
+#define EPUBEXPORTPLUGIN_H
 
 #include "pluginapi.h"
 #include "scplugin.h"
@@ -39,4 +39,4 @@ extern "C" PLUGIN_API int epubexportplugin_getPluginAPIVersion();
 extern "C" PLUGIN_API ScPlugin* epubexportplugin_getPlugin();
 extern "C" PLUGIN_API void epubexportplugin_freePlugin(ScPlugin* plugin);
 
-#endif
+#endif // EPUBEXPORTPLUGIN_H
