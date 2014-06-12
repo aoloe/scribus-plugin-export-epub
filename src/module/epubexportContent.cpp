@@ -7,7 +7,7 @@
 #include "module/epubexportEpubfile.h"
 #include "module/epubexportStructure.h"
 
-#include "module/epubexportScribusDocumentItem.h"
+#include "module/scribusAPIDocumentItem.h"
 
 #include "module/epubexportXhtml.h"
 
@@ -40,10 +40,15 @@ void EpubExportContent::fillEpub(EpubExportEpubfile* epub, EpubExportStructure* 
         {
             qDebug() << "page" << page;
             // TODO: iterate throug the items and add each of them to the xhtml file
-            foreach (EpubExportScribusDocumentItem* item, scribusDocument->getPageItems(page))
+            foreach (ScribusAPIDocumentItem* item, scribusDocument->getPageItems(page))
             {
-                // TODO: we probably need a EpubExportScribusDocumentItem as a proxy for the docItem 
-                // qDebug() << "item" << item;
+                qDebug() << "item" << item;
+                if (item->isTextFrame())
+                {
+                    // TODO: how to get the xml back from item? as QDOM... or as QString?
+                    // addTextXhtml(item->getXhtmlContent(xmlFile.getQDomDocument()));
+                    xmlFile.addContent(item->getDomContent(xmlFile.getQDomDocument()));
+                }
             }
         }
         QString filename = QString("Section%1.xhtml").arg(sectionI, 4, 10, QChar('0'));
@@ -54,5 +59,6 @@ void EpubExportContent::fillEpub(EpubExportEpubfile* epub, EpubExportStructure* 
         // epubFile->add("OEBPS/Text/" + file.filename, getFixedXhtml(xhtmlDocument.toString(-1)), true);
         epub->add("OEBPS/Text/" + filename, xmlFile.getString());
         structure->addToManifest(filename, "Text/" + filename, "application/xhtml+xml");
+        structure->addToToc(filename, "Text/" + filename, title);
     }
 }

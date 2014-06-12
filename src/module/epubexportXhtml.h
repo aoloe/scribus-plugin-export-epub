@@ -8,6 +8,7 @@
 #include <QDebug>
 
 #include <QDomElement>
+#include <QList>
 
 class QString;
 
@@ -20,6 +21,8 @@ public:
 	~EpubExportXhtml();
     void initialize(QString language, QString title, QString styleUrl);
     QString getString();
+    QDomDocument getQDomDocument() { return xhtmlDocument; }
+    void addContent(QList<QDomElement> content);
 private:
     QDomDocument xhtmlDocument;
     QDomElement xhtmlRoot;

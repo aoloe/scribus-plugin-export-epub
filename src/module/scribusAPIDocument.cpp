@@ -6,25 +6,25 @@
 #include <QVectorIterator> // for sorting the items on the page
 
 
-#include "module/epubexportScribusDocument.h"
-#include "module/epubexportScribusDocumentItem.h"
+#include "module/scribusAPIDocument.h"
+#include "module/scribusAPIDocumentItem.h"
 #include "module/epubexportStructure.h"
 
 #include "scribusdoc.h"
 #include "scribusview.h" // for the cover
 #include "scribusstructs.h" // for getPageRect() remove it, it's moved to ScPage
 
-EpubExportScribusDocument::EpubExportScribusDocument()
+ScribusAPIDocument::ScribusAPIDocument()
 {
 }
 
-EpubExportScribusDocument::~EpubExportScribusDocument()
+ScribusAPIDocument::~ScribusAPIDocument()
 {
 }
 
-EpubExportStructureMetadata EpubExportScribusDocument::getMetadata()
+ScribusAPIDocumentMetadata ScribusAPIDocument::getMetadata()
 {
-    EpubExportStructureMetadata metadata = EpubExportStructureMetadata();
+    ScribusAPIDocumentMetadata metadata = ScribusAPIDocumentMetadata();
 	DocumentInformation documentMetadata = this->scribusDoc->documentInfo();
 
 	// for mandatory fields we make later sure that they are filled
@@ -32,8 +32,6 @@ EpubExportStructureMetadata EpubExportScribusDocument::getMetadata()
     metadata.language = documentMetadata.langInfo();
     metadata.id = documentMetadata.ident();
     metadata.date = documentMetadata.date();
-    metadata.language = documentMetadata.langInfo();
-    metadata.title = documentMetadata.title();
     metadata.author = documentMetadata.author();
 	// non mandatory fields from the main screen
     metadata.subject = documentMetadata.subject();
@@ -55,7 +53,7 @@ EpubExportStructureMetadata EpubExportScribusDocument::getMetadata()
 /**
   * add OEBPS/Styles/style.css to the current epub file
   */ 
-QString EpubExportScribusDocument::getStylesAsCss()
+QString ScribusAPIDocument::getStylesAsCss()
 {
     int n = 0;
     QString wr = QString();
@@ -208,7 +206,7 @@ QString EpubExportScribusDocument::getStylesAsCss()
  * - create an xhtml file with the cover?
  *   http://blog.threepress.org/2009/11/20/best-practices-in-epub-cover-images/
  */
-QByteArray EpubExportScribusDocument::getFirstPageAsCoverImage()
+QByteArray ScribusAPIDocument::getFirstPageAsCoverImage()
 {
     QImage image;
     if (this->isPortrait(scribusDoc->DocPages.at(0)))
@@ -224,7 +222,7 @@ QByteArray EpubExportScribusDocument::getFirstPageAsCoverImage()
     return bytearray;
 }
 
-QString EpubExportScribusDocument::getStylenameSanitized(QString stylename)
+QString ScribusAPIDocument::getStylenameSanitized(QString stylename)
 {
     return stylename.remove(QRegExp("[^a-zA-Z\\d_-]"));
 }
@@ -242,7 +240,7 @@ QString EpubExportScribusDocument::getStylenameSanitized(QString stylename)
  * TODO: correctly handle the page ranges (from .. to)
  * TODO: rename it to signify that it only reads visible items on a page (and make it a getter?)
  */
-void EpubExportScribusDocument::readItems()
+void ScribusAPIDocument::readItems()
 {
     QList<int> layerNotPrintable;
     foreach(ScLayer layer, scribusDoc->Layers)
@@ -264,32 +262,19 @@ void EpubExportScribusDocument::readItems()
         if (itemPages.empty())
 			continue;
 
-        EpubExportScribusDocumentItem* documentItem = new EpubExportScribusDocumentItem();
+        ScribusAPIDocumentItem* documentItem = new ScribusAPIDocumentItem();
         documentItem->setItem(docItem);
         items[itemPages.first()->pageNr()].append(documentItem);
         // itemCounter++; eventually, for the progress bar... but we should probably count the pages
     }
 
     for (int i = 0; i < items.count(); i++)
-        // qSort(items[i].begin(), items[i].end(), EpubExportScribusDocument::isItemBefore);
-        qSort(items[i].begin(), items[i].end(), EpubExportScribusDocumentItem::isBeforeQSort);
+        qSort(items[i].begin(), items[i].end(), ScribusAPIDocumentItem::isBeforeQSort);
 
     qDebug() << "items:" << items;
 }
 
-/**
- * used by qSort to sort the items by their place on the page
- * TODO: as soon as other write directions are to be considered the order has to be made more flexible
- * TODO: rename this!
- */
-/*
-bool EpubExportScribusDocument::isItemBefore(const EpubExportScribusDocumentItem item1, const EpubExportScribusDocumentItem item2)
-{
-    return true; // item1->isBefore(item2);
-}
-*/
-
-void EpubExportScribusDocument::readSections()
+void ScribusAPIDocument::readSections()
 {
 
     bool allPages = pageRange.isEmpty();
@@ -304,7 +289,7 @@ void EpubExportScribusDocument::readSections()
     qDebug() << "sections" << sections;
 }
 
-QList<ScPage*> EpubExportScribusDocument::getPagesList()
+QList<ScPage*> ScribusAPIDocument::getPagesList()
 {
     QList<ScPage *> result;
     bool allPages = pageRange.isEmpty();
@@ -327,7 +312,7 @@ QList<ScPage*> EpubExportScribusDocument::getPagesList()
  *   (According to jghali OwnPage should only be used make sense of the coordinates of an item,
  *   which are stored in relation to its own page)
  */
-QList<ScPage *> EpubExportScribusDocument::getPagesWithItem(PageItem* item)
+QList<ScPage *> ScribusAPIDocument::getPagesWithItem(PageItem* item)
 {
     QList<ScPage *> result;
 
@@ -384,7 +369,7 @@ QList<ScPage *> EpubExportScribusDocument::getPagesWithItem(PageItem* item)
  * Add it as ScPage::getRect(const ScPage* page)
  * Eventually, rename to signify that it does not return xOffset, yOffset, ... but it adds the bleeds
  */
-QRect EpubExportScribusDocument::getPageRect(const ScPage* page)
+QRect ScribusAPIDocument::getPageRect(const ScPage* page)
 {
     MarginStruct bleeds = getPageBleeds(page);
     return QRect(
@@ -402,14 +387,36 @@ QRect EpubExportScribusDocument::getPageRect(const ScPage* page)
  * Warning: in ScribusDoc there are also bleeds() methods that return the values without the facing
  * pages correction!
  */
-MarginStruct EpubExportScribusDocument::getPageBleeds(const ScPage* page)
+MarginStruct ScribusAPIDocument::getPageBleeds(const ScPage* page)
 {
     MarginStruct result;
     scribusDoc->getBleeds(page, result);
     return result;
 }
 
-bool EpubExportScribusDocument::isPortrait(const ScPage* page)
+bool ScribusAPIDocument::isPortrait(const ScPage* page)
 {
         return (static_cast<int>(page->width()) >= static_cast<int>(page->width()));
+}
+
+QDebug operator<<(QDebug dbg, const ScribusAPIDocumentMetadata &metadata)
+{
+    dbg.nospace() << "( title:" << metadata.title << "\n"
+                  << ", author:" << metadata.author << "\n"
+                  << ", subject:" << metadata.subject << "\n"
+                  << ", date:" << metadata.date << "\n"
+                  << ", id:" << metadata.id << "\n"
+                  << ", language:" << metadata.language << "\n"
+                  << ", keywords:" << metadata.keywords << "\n"
+                  << ", description:" << metadata.description << "\n"
+                  << ", publisher:" << metadata.publisher << "\n"
+                  << ", contributor:" << metadata.contributor << "\n"
+                  << ", type:" << metadata.type << "\n"
+                  << ", format:" << metadata.format << "\n"
+                  << ", source:" << metadata.source << "\n"
+                  << ", relation:" << metadata.relation << "\n"
+                  << ", coverage:" << metadata.coverage << "\n"
+                  << ", rights:" << metadata.rights << "\n"
+                  << " )";
+    return dbg.space();
 }

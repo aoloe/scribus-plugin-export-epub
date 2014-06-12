@@ -77,6 +77,15 @@ void EpubExportXhtml::initialize(QString language, QString title, QString styleU
     xhtmlRoot.appendChild(xhtmlBody);
 }
 
+void EpubExportXhtml::addContent(QList<QDomElement> content)
+{
+    foreach (QDomElement paragraph, content)
+    {
+        // qDebug() << "paragraph" << paragraph;
+        xhtmlBody.appendChild(paragraph);
+    }
+}
+
 /**
  * TODO: refactor and include getFixedXhtml() in here
  */

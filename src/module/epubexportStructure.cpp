@@ -13,6 +13,8 @@
 
 #include "documentinformation.h"
 
+#include "module/scribusAPIDocument.h"
+
 EpubExportStructure::EpubExportStructure()
 {
     cover = QByteArray();
@@ -22,22 +24,26 @@ EpubExportStructure::~EpubExportStructure()
 {
 }
 
-void EpubExportStructure::readMetadata(EpubExportStructureMetadata metadata)
+void EpubExportStructure::readMetadata(ScribusAPIDocumentMetadata metadata)
 {
+    qDebug() << "metadata" << metadata;
     this->metadata = metadata;
 	if (this->metadata.title == "")
-		this->metadata.title = filename;
+    {
+        QFileInfo filenameInfo(filename);
+		this->metadata.title = filenameInfo.fileName();
+    }
 	// TODO: if (documentMetadata.author() == "") // -> it's recommended not obligatory!
 	// TODO: if (documentMetadata.authorSort() == "") // -> it's recommended not obligatory!
-	if (metadata.language == "")
-		metadata.language = ScCore->getGuiLanguage();
-	if (metadata.language == "")
-		metadata.language = "en_GB"; // scribus' default language is english (or rather en-GB?)
-	if (metadata.id == "")
-		metadata.id = "urn:uuid:"+QUuid::createUuid().toString().remove("{" ).remove("}" ); // Sigil/Misc/Utility.cpp -> Utility::CreateUUID()
+	if (this->metadata.language == "")
+		this->metadata.language = ScCore->getGuiLanguage();
+	if (this->metadata.language == "")
+		this->metadata.language = "en-GB"; // scribus' default language is english (or rather en-GB?)
+	if (this->metadata.id == "")
+		this->metadata.id = "urn:uuid:"+QUuid::createUuid().toString().remove("{" ).remove("}" ); // Sigil/Misc/Utility.cpp -> Utility::CreateUUID()
 	// TODO: store the generated uuid in the scribus document information?
-	if (metadata.date == "")
-		metadata.date = QDate::currentDate().toString(Qt::ISODate);
+	if (this->metadata.date == "")
+		this->metadata.date = QDate::currentDate().toString(Qt::ISODate);
 }
 
 void EpubExportStructure::addToManifest(QString id, QString path, QString mediatype)
@@ -45,8 +51,17 @@ void EpubExportStructure::addToManifest(QString id, QString path, QString mediat
     EpubExportStructureManifestItem item;
     item.id = id;
     item.filename = path;
-    item. mediatype = mediatype;
+    item.mediatype = mediatype;
     addToManifest(item);
+}
+
+void EpubExportStructure::addToToc(QString id, QString path, QString title)
+{
+    EpubExportStructureManifestItem item;
+    item.id = id;
+    item.filename = path;
+    item.title = title;
+    addToToc(item);
 }
 
 /**
@@ -97,6 +112,8 @@ QString EpubExportStructure::getOPF()
 	elementMetadata.setAttribute("xmlns:dc", "http://purl.org/dc/elements/1.1/");
 	elementMetadata.setAttribute("xmlns:opf", "http://www.idpf.org/2007/opf");
 	xmlRoot.appendChild(elementMetadata);
+
+    qDebug() << "metadata" << metadata;
 
 	element = xmlDocument.createElement("dc:title");
 	text = xmlDocument.createTextNode(metadata.title);
@@ -234,7 +251,7 @@ QString EpubExportStructure::getOPF()
 	{
 		element = xmlDocument.createElement("item");
 		element.setAttribute("id", item.id);
-		element.setAttribute("href", item.href);
+		element.setAttribute("href", item.filename);
 		element.setAttribute("media-type", item.mediatype);
 		manifest.appendChild(element);
 	}
@@ -252,10 +269,10 @@ QString EpubExportStructure::getOPF()
 	spine.setAttribute("toc", "ncx");
 	xmlRoot.appendChild(spine);
 
-    foreach (EpubExportStructureManifestItem item, this->manifest)
+    foreach (EpubExportStructureManifestItem item, this->toc)
     {
 		element = xmlDocument.createElement("itemref");
-		element.setAttribute("idref", filename);
+		element.setAttribute("idref", /* "OEBPS/" + */ item.id);
 		spine.appendChild(element);
 	}
 
@@ -359,11 +376,11 @@ QString EpubExportStructure::getNCX()
 	xmlRoot.appendChild(nav);
 
     int i = 0; // TODO: shouldn't i be in EpubExportStructureManifestItem?
-    foreach (EpubExportStructureManifestItem item, manifest)
+    foreach (EpubExportStructureManifestItem item, toc)
     {
 		QDomElement navPoint = xmlDocument.createElement("navPoint");
 		navPoint.setAttribute("class", "chapter");
-		navPoint.setAttribute("id", item.filename);
+		navPoint.setAttribute("id", item.id);
 		navPoint.setAttribute("playOrder", i + 1);
 		nav.appendChild(navPoint);
 
@@ -375,7 +392,7 @@ QString EpubExportStructure::getNCX()
 		elementText.appendChild(text);
 
 		element = xmlDocument.createElement("content");
-		element.setAttribute("src", "Text/" + item.filename);
+		element.setAttribute("src", item.filename);
 		navPoint.appendChild(element);
         i++;
 	}
@@ -426,6 +443,7 @@ QDebug operator<<(QDebug dbg, const EpubExportStructure &structure)
     dbg.nospace() << "(" << "Debug not implemented" << ")";
     return dbg.space();
 }
+/*
 QDebug operator<<(QDebug dbg, const EpubExportStructureMetadata &metadata)
 {
     QStringList output;
@@ -448,6 +466,7 @@ QDebug operator<<(QDebug dbg, const EpubExportStructureMetadata &metadata)
                   << " )";
     return dbg.space();
 }
+*/
 QDebug operator<<(QDebug dbg, const EpubExportStructureManifestItem &item)
 {
     dbg.nospace() << "( title:" << item.title << "\n"

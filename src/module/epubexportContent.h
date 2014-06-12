@@ -9,7 +9,7 @@
 
 #include <QList>
 
-#include "module/epubexportScribusDocument.h"
+#include "module/scribusAPIDocument.h"
 
 class EpubExportEpubfile;
 class EpubExportStructure;
@@ -24,12 +24,14 @@ public:
 	EpubExportContent();
 	~EpubExportContent();
 
-    void setDocument(EpubExportScribusDocument* scribusDocument) { this->scribusDocument = scribusDocument; }
+    void setDocument(ScribusAPIDocument* scribusDocument) { this->scribusDocument = scribusDocument; }
 
     void fillEpub(EpubExportEpubfile* epub, EpubExportStructure* structure);
 
 private:
-    EpubExportScribusDocument* scribusDocument;
+    ScribusAPIDocument* scribusDocument;
+
+    void addTextXhtml(QString contentXhtml);
 };
 
 QDebug operator<<(QDebug dbg, const EpubExportContent content);

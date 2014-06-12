@@ -15,22 +15,23 @@
 
 #include "scribusapi.h" // for SCRIBUS_API
 
+#include "module/scribusAPIDocument.h"
+
+/*
 struct EpubExportStructureMetadata
 {
     QString title;
-    /*
-     * Publications with multiple co-authors should provide multiple creator elements,
-     * each containing one author. The order of creator elements is presumed
-     * to define the order in which the creators' names should be presented by the Reading System.
-     *
-     * This specification recommends that the content of the creator elements hold the text
-     * for a single name as it would be presented to the Reader.
-     *
-     * This specification adds to the creator element two optional attributes: role and file-as.
-     * The set of values for role are identical to those defined in Section 2.2.6
-     * for the contributor element. The file-as attribute should be used
-     * to specify a normalized form of the contents, suitable for machine processing.
-     */
+     // Publications with multiple co-authors should provide multiple creator elements,
+     // each containing one author. The order of creator elements is presumed
+     // to define the order in which the creators' names should be presented by the Reading System.
+     //
+     // This specification recommends that the content of the creator elements hold the text
+     // for a single name as it would be presented to the Reader.
+     //
+     // This specification adds to the creator element two optional attributes: role and file-as.
+     // The set of values for role are identical to those defined in Section 2.2.6
+     // for the contributor element. The file-as attribute should be used
+     // to specify a normalized form of the contents, suitable for machine processing.
     QString author;
     QString subject; // multiple instances are allowed
     QString date;
@@ -72,6 +73,7 @@ struct EpubExportStructureMetadata
         rights = "";
     }
 };
+*/
 
 struct EpubExportStructureManifestItem
 {
@@ -101,12 +103,14 @@ public:
 	EpubExportStructure();
 	~EpubExportStructure();
 
-	void readMetadata(EpubExportStructureMetadata metadata);
-	EpubExportStructureMetadata getMetadata() {return metadata;}
+	void readMetadata(ScribusAPIDocumentMetadata  metadata);
+	ScribusAPIDocumentMetadata getMetadata() {return metadata;}
 
 	void setFilename(QString filename) {this->filename = filename;}
 	void addToManifest(EpubExportStructureManifestItem item) {this->manifest.append(item);}
 	void addToManifest(QString id, QString path, QString mediatype);
+	void addToToc(QString id, QString path, QString title);
+	void addToToc(EpubExportStructureManifestItem item) {this->toc.append(item);}
     QString getOPF();
     QString getNCX();
     QString getContainer();
@@ -114,14 +118,15 @@ public:
     bool hasCover() {return !this->cover.isEmpty();}
     QByteArray getCover();
 private:
-    EpubExportStructureMetadata metadata;
+    ScribusAPIDocumentMetadata metadata;
     QString filename;
     QVector<EpubExportStructureManifestItem> manifest;
+    QVector<EpubExportStructureManifestItem> toc;
     QByteArray cover; // byte representation of the cover image
 };
 
 QDebug operator<<(QDebug dbg, const EpubExportStructure &structure);
-QDebug operator<<(QDebug dbg, const EpubExportStructureMetadata &metadata);
+// QDebug operator<<(QDebug dbg, const EpubExportStructureMetadata &metadata);
 QDebug operator<<(QDebug dbg, const EpubExportStructureManifestItem &item);
 
 #endif // EPUBEXPORTSTRUCTURE_H

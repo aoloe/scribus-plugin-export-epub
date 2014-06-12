@@ -12,8 +12,9 @@ SET(SCRIBUS_EPUBEXPORT_PLUGIN_MOC_CLASSES
   ui/epubexportdialog.h
   module/epubexportZip.h
   module/epubexportStructure.h
-  module/epubexportScribusDocument.h
-  module/epubexportScribusDocumentItem.h
+  module/scribusAPIDocument.h
+  module/scribusAPIDocumentItem.h
+  module/scribusAPIDocumentItemFormatting.h
   module/epubexportContent.h
   module/epubexportXhtml.h
   module/epubexportEpubfile.h
@@ -25,8 +26,9 @@ SET(SCRIBUS_EPUBEXPORT_PLUGIN_SOURCES
   ui/epubexportdialog.cpp
   module/epubexportZip.cpp
   module/epubexportStructure.cpp
-  module/epubexportScribusDocument.cpp
-  module/epubexportScribusDocumentItem.cpp
+  module/scribusAPIDocument.cpp
+  module/scribusAPIDocumentItem.cpp
+  module/scribusAPIDocumentItemFormatting.cpp
   module/epubexportContent.cpp
   module/epubexportXhtml.cpp
   module/epubexportEpubfile.cpp

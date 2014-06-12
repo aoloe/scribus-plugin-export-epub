@@ -39,6 +39,9 @@ PLEASE:
 - get the text and its formatting to correctly export
   - rename epubexportScribusDoc to epubexportScribusDocument
   - create epubexportScribusDocumentItem as a proxy to PageItem
+- reactivate the part on marks in getTextRuns() (warning: StoryText::item(i) is now private and i have to find a new way to detect marks
+- the new zip library does not correctly write the mimetype as the first file. fix the order
+  or add an openArchive method (taken from unzip?) to be able to append to an existing file (and first add only the manifest, close the file and reopen it)
 
 
 ## Inherited TODO
