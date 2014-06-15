@@ -3,6 +3,8 @@
 #include <QString>
 #include <QDomElement>
 
+#include "util_formats.h" // for checking file extension
+
 #include "module/scribusAPIDocumentItem.h"
 #include "module/scribusAPIDocumentItemFormatting.h"
 
@@ -222,16 +224,16 @@ QList<QDomElement> ScribusAPIDocumentItem::getDomContentImage(QDomDocument xhtml
     // qDebug() << "image width" << item->pixm.width();
     // qDebug() << "image height" << item->pixm.height();
 
-    double cropX = docItem->imageXOffset();
-    double cropY =  docItem->imageYOffset();
+    double cropX = item->imageXOffset();
+    double cropY =  item->imageYOffset();
 
     // calculate the frame's width and height in "image pixels"
-    double frameWidth = docItem->width() / docItem->imageXScale();
-    double frameHeight = docItem->height() / docItem->imageYScale();
+    double frameWidth = item->width() / item->imageXScale();
+    double frameHeight = item->height() / item->imageYScale();
 
      // TODO: if the image's width and height are already stored, only load the image when it has to be cropped or scaled
     if (!image.load(filename))
-        return;
+        return result;
 
     QRect frameRect = QRect(- cropX, -cropY, frameWidth, frameHeight);
     QRect imageRect = QRect(0, 0, image.width(), image.height());
@@ -256,8 +258,8 @@ QList<QDomElement> ScribusAPIDocumentItem::getDomContentImage(QDomDocument xhtml
     int scaling = 100;
 
     ScPage* page = doc->DocPages.at(this->pageNumber);
-    qDebug() << "item width" << docItem->width();
-    double proportion = docItem->width() / (page->width() - page->rightMargin() - page->leftMargin());
+    qDebug() << "item width" << item->width();
+    double proportion = item->width() / (page->width() - page->rightMargin() - page->leftMargin());
     qDebug() << "proportion" << proportion;
     qDebug() << "imageMaxWidthThreshold" << imageMaxWidthThreshold;
 
@@ -294,7 +296,7 @@ QList<QDomElement> ScribusAPIDocumentItem::getDomContentImage(QDomDocument xhtml
     element.setAttribute("width", (int) item->width());
     element.setAttribute("alt", ""); // TODO do we have a way to define the metadata? eventually from the exif? epubcheck says it's mandatory... and it's not nice to leave it empty...
     element.setAttribute("src", "../"+filepath); // TODO: make sure that the name is unique in the target! (if it already exists prefix the frame name?)
-    // TODO: set the width and height? from the docItem?
+    // TODO: set the width and height? from the item?
     div.appendChild(element);
 
     result.append(div);
@@ -348,7 +350,7 @@ QList<QDomElement> ScribusAPIDocumentItem::getDomContentImage(QDomDocument xhtml
         /*
         // TODO: some leftovers if we want ever do a color managed conversion of the pictures
         ScImage img;
-        ScImage docItem->pixm;
+        ScImage item->pixm;
         ImageInfoRecord imgInfo;
             ImageTypeEnum type -> 0 = jpg, 1 = tiff, 2 = psd, 3 = eps/ps, 4 = pdf, 5 = jpg2000, 6 = other
             ColorSpaceEnum colorspace -> 0 = RGB  1 = CMYK  2 = Grayscale 3 = Duotone
