@@ -37,6 +37,7 @@ PLEASE:
 ## TODO
 
 - create the scripter binding so that i can run the tests in an automatic way
+- use the code to create an image from the first page and use it as a cover
 - reactivate the part on marks in getTextRuns() (warning: StoryText::item(i) is now private and i have to find a new way to detect marks
 - the new zip library does not correctly write the mimetype as the first file. fix the order
   or add an openArchive method (taken from unzip?) to be able to append to an existing file (and first add only the manifest, close the file and reopen it)

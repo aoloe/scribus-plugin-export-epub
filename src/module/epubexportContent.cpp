@@ -47,7 +47,11 @@ void EpubExportContent::fillEpub(EpubExportEpubfile* epub, EpubExportStructure* 
                 {
                     // TODO: how to get the xml back from item? as QDOM... or as QString?
                     // addTextXhtml(item->getXhtmlContent(xmlFile.getQDomDocument()));
-                    xmlFile.addContent(item->getDomContent(xmlFile.getQDomDocument()));
+                    xmlFile.addContent(item->getDomContentText(xmlFile.getQDomDocument()));
+                }
+                else if (item->isImageFrame())
+                {
+                    xmlFile.addContent(item->getDomContentImage(xmlFile.getQDomDocument()));
                 }
             }
         }

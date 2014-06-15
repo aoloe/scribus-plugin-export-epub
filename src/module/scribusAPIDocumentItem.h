@@ -30,6 +30,7 @@ class ScribusAPIDocumentItem : public QObject
 public:
 	ScribusAPIDocumentItem();
 	~ScribusAPIDocumentItem();
+    void setPageNumber(int pageNumber) { this->pageNumber = pageNumber; }
     void setItem(PageItem* item) { this->item = item; }
     bool isBefore(ScribusAPIDocumentItem* const item) const;
     /**
@@ -40,16 +41,19 @@ public:
     int getY() const { return this->item->gYpos; }
 
     bool isTextFrame() { return this->item->asTextFrame(); }
+    bool isImageFrame() { return this->item->asImageFrame(); }
     bool isTextFirstInChain() { return this->item->prevInChain() == NULL; }
     bool isTextEmpty() { return this->item->itemText.length() == 0; }
 
     ScribusAPIDocumentItemFormatting getFormattingAtPosition(int position);
 
     // QString getXhtmlContent(QDomDocument xhtmlDocument);
-    QList<QDomElement> getDomContent(QDomDocument xhtmlDocument);
+    QList<QDomElement> getDomContentText(QDomDocument xhtmlDocument);
+    QList<QDomElement> getDomContentImage(QDomDocument xhtmlDocument);
     QVector<ScribusAPIDocumentItemTextRuns> getTextRuns();
 
 protected:
+    int pageNumber;
     PageItem* item;
 
     QString getStylenameSanitized(QString stylename);

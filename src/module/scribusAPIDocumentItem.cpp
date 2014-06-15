@@ -50,7 +50,7 @@ bool ScribusAPIDocumentItem::isBefore(ScribusAPIDocumentItem* const item) const
  *   - add the p to the dom
  *   - set the current element as the latest element paragraph created
  */
-QList<QDomElement> ScribusAPIDocumentItem::getDomContent(QDomDocument xhtmlDocument)
+QList<QDomElement> ScribusAPIDocumentItem::getDomContentText(QDomDocument xhtmlDocument)
 {
     QList<QDomElement> result;
     // initialize the local variables
@@ -178,6 +178,186 @@ QList<QDomElement> ScribusAPIDocumentItem::getDomContent(QDomDocument xhtmlDocum
             result.append(elementParagraph);
     }
     // qDebug() << "result" << result;
+    return result;
+}
+
+QList<QDomElement> ScribusAPIDocumentItem::getDomContentImage(QDomDocument xhtmlDocument)
+{
+    QList<QDomElement> result;
+    QString filename(item->Pfile);
+    if (filename == "")
+        return result;
+
+    QFileInfo fileinfo = QFileInfo(filename);
+    QString ext = fileinfo.suffix().toLower();
+
+    int mediaType = 0;
+    if (ext == "png")
+        mediaType = FormatsManager::PNG;
+    else if (extensionIndicatesJPEG(ext))
+        mediaType = FormatsManager::JPEG;
+    qDebug() << "mediaType" << mediaType;
+
+    if (mediaType == 0)
+    {
+        // TODO: convert the other "acceptable" image types to png or jpeg (how to choose?)
+        qDebug() << "image format not yet supported: " << filename;
+        return result;
+    }
+
+    QPixmap image; // null if the image has not been cropped nor scaled
+    bool usingLoadedImage = false;
+
+    // qDebug() << "image file" << filename;
+    // qDebug() << "imageXScale" << item->imageXScale();
+    // qDebug() << "imageYScale" << item->imageYScale();
+    // qDebug() << "imageXOffset" << item->imageXOffset();
+    // qDebug() << "imageYOffset" << item->imageYOffset();
+    // qDebug() << "item width" << item->width();
+    // qDebug() << "item height" << item->height();
+    // qDebug() << "image BBoxX" << item->pixm.imgInfo.BBoxX;
+    // qDebug() << "image BBoxH" << item->pixm.imgInfo.BBoxH;
+    // qDebug() << "image xres" << item->pixm.imgInfo.xres;
+    // qDebug() << "image yres" << item->pixm.imgInfo.yres;
+    // qDebug() << "image width" << item->pixm.width();
+    // qDebug() << "image height" << item->pixm.height();
+
+    double cropX = docItem->imageXOffset();
+    double cropY =  docItem->imageYOffset();
+
+    // calculate the frame's width and height in "image pixels"
+    double frameWidth = docItem->width() / docItem->imageXScale();
+    double frameHeight = docItem->height() / docItem->imageYScale();
+
+     // TODO: if the image's width and height are already stored, only load the image when it has to be cropped or scaled
+    if (!image.load(filename))
+        return;
+
+    QRect frameRect = QRect(- cropX, -cropY, frameWidth, frameHeight);
+    QRect imageRect = QRect(0, 0, image.width(), image.height());
+    QRect cropRect;
+    // qDebug() << "frameRect" << frameRect;
+    // qDebug() << "imageRect" << imageRect;
+
+    if (frameRect != imageRect)
+    {
+        usingLoadedImage = true;
+        cropRect = frameRect.intersected(imageRect);
+        // qDebug() << "cropRect" << cropRect;
+        if (!cropRect.isEmpty())
+        {
+            QPixmap imageTmp = image.copy(cropRect);
+            image = imageTmp;
+        }
+    }
+
+    qDebug() << "frameWidth" << frameWidth;
+    qDebug() << "imageMaxWidth" << imageMaxWidth;
+    int scaling = 100;
+
+    ScPage* page = doc->DocPages.at(this->pageNumber);
+    qDebug() << "item width" << docItem->width();
+    double proportion = docItem->width() / (page->width() - page->rightMargin() - page->leftMargin());
+    qDebug() << "proportion" << proportion;
+    qDebug() << "imageMaxWidthThreshold" << imageMaxWidthThreshold;
+
+    int scaledWidth;
+    if (proportion > static_cast<double>(imageMaxWidthThreshold) / 100)
+        scaledWidth = imageMaxWidth;
+    else
+        scaledWidth = static_cast<int>(proportion * imageMaxWidth);
+    qDebug() << "scaledWidth" << scaledWidth;
+
+    qDebug() << "image width" << image.width();
+    if (scaledWidth < frameWidth)
+        scaling = static_cast<int>(static_cast<double>(scaledWidth) / image.width() * 100);
+    qDebug() << "scaling" << scaling;
+
+    QString zippedFilename = fileinfo.fileName();
+    if (usingLoadedImage)
+    {
+        zippedFilename = fileinfo.completeBaseName()+"_c-%1-%2-%3-%4-s-%5."+fileinfo.suffix();
+        zippedFilename = zippedFilename.arg(cropRect.x()).arg(cropRect.y()).arg(cropRect.width()).arg(cropRect.height()).arg(scaling);
+    }
+    zippedFilename.remove(QRegExp("[^a-zA-Z\\d\\s_.-]"));
+    qDebug() << "zippedFilename" << zippedFilename;
+
+    QString filepath = "Images/" + zippedFilename;
+
+    // add the image to the dom
+    QDomElement div = xhtmlDocument.createElement("div");
+    // TODO: only set class picture if the images is maximized (or use different names: the goal is not to only set the page break before, if the picture is maximized)
+    div.setAttribute("class", "picture");
+    QDomElement element = xhtmlDocument.createElement("img");
+    // <image height="800" width="600" xlink:href="../Images/cover.jpeg"></image>
+    element.setAttribute("height", (int) item->height()); // TODO: use the real width of the visible part of the image (as a rectangle)
+    element.setAttribute("width", (int) item->width());
+    element.setAttribute("alt", ""); // TODO do we have a way to define the metadata? eventually from the exif? epubcheck says it's mandatory... and it's not nice to leave it empty...
+    element.setAttribute("src", "../"+filepath); // TODO: make sure that the name is unique in the target! (if it already exists prefix the frame name?)
+    // TODO: set the width and height? from the docItem?
+    div.appendChild(element);
+
+    result.append(div);
+
+
+    /*
+    void EpubExport::addImage(PageItem* docItem)
+    {
+
+
+        // TODO: add also the path to the original picture before the zippedFilename in order to catch files with
+        // the same name but from different paths... and then? how to set the name?
+        if (!imageFileNames.contains(zippedFilename))
+        {
+            imageFileNames << zippedFilename;
+            qDebug() << "zippedFilename" << zippedFilename;
+            qDebug() << "imageFileNames" << imageFileNames;
+            if (scaling > 0 && scaling < 100)
+            {
+                usingLoadedImage = true;
+                QPixmap imageTmp = image.scaledToWidth(scaledWidth, Qt::SmoothTransformation);
+                image = imageTmp;
+            }
+
+            // copy the image into the zip
+            if (!usingLoadedImage)
+            {
+                qDebug() << "standard file add";
+                QFile file(fileinfo.filePath()); // TODO: if we already have a scimage we may have to change this
+                epubFile->add("OEBPS/"+filepath, &file, true);
+            }
+            else
+            {
+                QByteArray imageBytes;
+                QBuffer buffer(&imageBytes);
+                buffer.open(QIODevice::WriteOnly);
+                image.save(&buffer, mediaType == FormatsManager::JPEG ? "jpg" : "png");
+                epubFile->add("OEBPS/"+filepath, imageBytes, false);
+
+
+            }
+
+            struct EPUBExportContentItem contentItem;
+            contentItem.id = zippedFilename;
+            contentItem.href = filepath;
+            contentItem.mediaType = FormatsManager::instance()->mimetypeOfFormat(mediaType).first();
+            contentItems.append(contentItem);
+        } // if (imageFileNames.contains(zippedFilename))
+    }
+*/
+        /*
+        // TODO: some leftovers if we want ever do a color managed conversion of the pictures
+        ScImage img;
+        ScImage docItem->pixm;
+        ImageInfoRecord imgInfo;
+            ImageTypeEnum type -> 0 = jpg, 1 = tiff, 2 = psd, 3 = eps/ps, 4 = pdf, 5 = jpg2000, 6 = other
+            ColorSpaceEnum colorspace -> 0 = RGB  1 = CMYK  2 = Grayscale 3 = Duotone
+        CMSettings cms(c->doc(), Profil, Intent);
+        cms.setUseEmbeddedProfile(Embedded);
+        usingLoadedImage = img.loadPicture(fn, c->pixm.imgInfo.actualPageNumber, cms, ScImage::RGBData, 72, &realCMYK);
+        bool loadPicture(const QString & fn, int page, const CMSettings& cmSettings, RequestType requestType, int gsRes, bool *realCMYK = 0, bool showMsg = false);
+         */
+
     return result;
 }
 
