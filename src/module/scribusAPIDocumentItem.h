@@ -31,13 +31,13 @@ public:
 	ScribusAPIDocumentItem();
 	~ScribusAPIDocumentItem();
     void setItem(PageItem* item) { this->item = item; }
-    bool isBefore(ScribusAPIDocumentItem* item);
+    bool isBefore(ScribusAPIDocumentItem* const item) const;
     /**
      * used by qSort to sort the items by their place on the page
      */
-    static bool isBeforeQSort(const ScribusAPIDocumentItem* item1, const ScribusAPIDocumentItem* item2) { return true; } // item1.isBefore(item2); }
-    int getX() { return this->item->gXpos; }
-    int getY() { return this->item->gYpos; }
+    static bool isBeforeQSort(ScribusAPIDocumentItem* const item1, ScribusAPIDocumentItem* const item2) { /*return true; } // */ return item1->isBefore(item2); }
+    int getX() const { return this->item->gXpos; }
+    int getY() const { return this->item->gYpos; }
 
     bool isTextFrame() { return this->item->asTextFrame(); }
     bool isTextFirstInChain() { return this->item->prevInChain() == NULL; }

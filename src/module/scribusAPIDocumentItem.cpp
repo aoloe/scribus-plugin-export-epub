@@ -17,10 +17,10 @@ ScribusAPIDocumentItem::~ScribusAPIDocumentItem()
 /**
  * TODO: as soon as other write directions are to be considered the order has to be made more flexible
  */
-bool ScribusAPIDocumentItem::isBefore(ScribusAPIDocumentItem* item)
+bool ScribusAPIDocumentItem::isBefore(ScribusAPIDocumentItem* const item) const
 {
-    return (getX() < item->getX()) ||
-           ((getX() == item->getX()) && (getY() < item->getY()));
+    return (getY() < item->getY()) ||
+           ((getY() == item->getY()) && (getX() < item->getX()));
 }
 
 /**
