@@ -26,6 +26,8 @@ and adding a new directory in `test/samples/` with each sample (collected for ou
 
 Please don't forget to add a `README.md` file explaining your sample is relevant and -- eventually -- an `.epub` file showing how the result should be.
 
+All the content in the samples must be freely shareable. You might have to replace the images through cc-by-sa or public domain ones (you can search for such images on wikimedia / flickr or take/generate yourself dummy pictures). The same applies for the text. The files will be published in this repository.
+
 And, finally, just make a pull request to let me know about it!
 
 PLEASE:
