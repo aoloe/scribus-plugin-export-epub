@@ -20,7 +20,7 @@ ScribusAPIDocumentItem::~ScribusAPIDocumentItem()
 bool ScribusAPIDocumentItem::isBefore(ScribusAPIDocumentItem* item)
 {
     return (getX() < item->getX()) ||
-           ((getX() == item->getX()) && (getY() < item->getY()));
+           ((getX() == item->getX()) && (getY() <= item->getY()));
 }
 
 /**
@@ -370,6 +370,11 @@ QString ScribusAPIDocumentItem::getStylenameSanitized(QString stylename)
     return stylename.remove(QRegExp("[^a-zA-Z\\d_-]"));
 }
 
+QDebug operator<<(QDebug dbg, ScribusAPIDocumentItem &item)
+{
+    dbg.nospace() << "(name:" << item.getName() << ")";
+    return dbg.space();
+}
 
 // not tested yet
 QDebug operator<<(QDebug dbg, const ScribusAPIDocumentItemTextRuns run)

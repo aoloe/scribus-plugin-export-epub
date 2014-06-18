@@ -43,6 +43,8 @@ public:
     bool isTextFirstInChain() { return this->item->prevInChain() == NULL; }
     bool isTextEmpty() { return this->item->itemText.length() == 0; }
 
+    QString getName() { return this->item->itemName(); }
+
     ScribusAPIDocumentItemFormatting getFormattingAtPosition(int position);
 
     // QString getXhtmlContent(QDomDocument xhtmlDocument);
