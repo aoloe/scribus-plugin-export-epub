@@ -252,6 +252,7 @@ QList<QDomElement> ScribusAPIDocumentItem::getDomContentImage(QDomDocument xhtml
             image = imageTmp;
         }
     }
+    /*
 
     qDebug() << "frameWidth" << frameWidth;
     qDebug() << "imageMaxWidth" << imageMaxWidth;
@@ -300,6 +301,7 @@ QList<QDomElement> ScribusAPIDocumentItem::getDomContentImage(QDomDocument xhtml
     div.appendChild(element);
 
     result.append(div);
+    */
 
 
     /*

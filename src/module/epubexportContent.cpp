@@ -4,6 +4,7 @@
 #include <QDebug>
 
 #include "module/epubexportContent.h"
+#include "module/epubexportImage.h"
 #include "module/epubexportEpubfile.h"
 #include "module/epubexportStructure.h"
 
@@ -51,7 +52,9 @@ void EpubExportContent::fillEpub(EpubExportEpubfile* epub, EpubExportStructure* 
                 }
                 else if (item->isImageFrame())
                 {
+                    item->setPageSize();
                     xmlFile.addContent(item->getDomContentImage(xmlFile.getQDomDocument()));
+                    EpubExportImage image;
                 }
             }
         }
