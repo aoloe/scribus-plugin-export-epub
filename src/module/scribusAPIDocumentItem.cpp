@@ -183,6 +183,15 @@ QList<QDomElement> ScribusAPIDocumentItem::getDomContentText(QDomDocument xhtmlD
     return result;
 }
 
+/**
+ * @return the visible part of the image in PNG or JPG format
+ */
+ScribusAPIDocumentItemImage ScribusAPIDocumentItem::getImageForDisplay()
+{
+}
+
+bool ScribusAPIDocumentItem::getImage
+
 QList<QDomElement> ScribusAPIDocumentItem::getDomContentImage(QDomDocument xhtmlDocument)
 {
     QList<QDomElement> result;
