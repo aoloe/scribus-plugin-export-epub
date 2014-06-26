@@ -11,6 +11,7 @@
 #include <QVector>
 
 class QDomDocument;
+class QDomElement;
 
 #include "scribusdoc.h"
 

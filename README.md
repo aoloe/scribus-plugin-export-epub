@@ -34,6 +34,26 @@ PLEASE:
 - try to keep the files as simple as possible and
 - submit one sample file per case.
 
+## Features
+
+## Code flow
+
+- `epubexportplugin.cpp`:
+  - implement the plug interface
+  - launch and evaluate the export dialog
+  - pass the the current document and the options from the dialog to `EpubExport`
+- `EpubExport` (`epubexport.cpp`):
+  - create `EpubExportEpubfile`
+  - create a `ScribusAPIDocument` with the current document, read the list of items and sections
+  - create `EpubExportStructure`
+  - get the metadata from `ScribusAPIDocument` and pass it to `EpubExportStructure`
+  - create `EpubExportContent`, pass `ScribusAPIDocument`and `EpubExportStructure` and get it to fill `
+  - get the cover from the structure (if one is defined) or from the first page of `ScribusAPIDocument` otherwise
+  - get the specific data from EpubExportStructure for the ncx and opf files and store them in the EpubExportEpubfile.
+-  `EpubExportEpubfile` (epubexportEpubfile.cpp`)
+-  `EpubExportContent` (epubexportContent.cpp`)
+   - create one xhtml file foreach section
+
 ## TODO
 
 - create the scripter binding so that i can run the tests in an automatic way
