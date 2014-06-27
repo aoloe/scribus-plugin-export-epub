@@ -55,6 +55,7 @@ void EpubExportContent::fillEpub(EpubExportEpubfile* epub, EpubExportStructure* 
                     // item->setPageSize();
                     xmlFile.addContent(item->getDomContentImage(xmlFile.getQDomDocument()));
                     // EpubExportImage image;
+                    xmlFile.addImage()
                 }
                 foreach (ScribusAPIDocumentItemResourceFile resourceFile, item->getResourceFiles())
                 {
