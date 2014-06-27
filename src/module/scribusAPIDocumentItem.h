@@ -1,6 +1,10 @@
 /**
  * ScribusAPIDocumentItem is a proxy to the scribus' PageItem and is thought as
  * an interface to get information about the scribus items
+ *
+ * This file is part of the ScribusAPIDocument plugin
+ * (c) GPL 2, Ale Rimoldi <ale@graphicslab.org>
+ * For the full copyright and license information, please view the LICENSE
  */
 #ifndef SCRIBUSAPIDOCUMENTITEM_H
 #define SCRIBUSAPIDOCUMENTITEM_H
@@ -23,6 +27,13 @@ struct ScribusAPIDocumentItemTextRuns
     int length;
     char type; // p=paragraph, f=formatting
     QVector< QVector<QString> > content;
+};
+
+struct ScribusAPIDocumentItemResourceFile
+{
+    QString filename;
+    QString filePath;
+    QString fileContent;
 };
 
 class ScribusAPIDocumentItem : public QObject
@@ -51,6 +62,8 @@ public:
     // QString getXhtmlContent(QDomDocument xhtmlDocument);
     QList<QDomElement> getDomContentText(QDomDocument xhtmlDocument);
     QList<QDomElement> getDomContentImage(QDomDocument xhtmlDocument);
+    QList<ScribusAPIDocumentItemResourceFile> getResourceFiles();
+
     QVector<ScribusAPIDocumentItemTextRuns> getTextRuns();
 
 protected:

@@ -376,6 +376,12 @@ QList<QDomElement> ScribusAPIDocumentItem::getDomContentImage(QDomDocument xhtml
     return result;
 }
 
+QList<ScribusAPIDocumentItemResourceFile> ScribusAPIDocumentItem::getResourceFiles()
+{
+    QList<ScribusAPIDocumentItemResourceFile> result;
+    return result;
+}
+
 /**
  * parse the text and define the runs list
  * this method is based on pierre's work for the mitical OIF branch

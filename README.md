@@ -52,7 +52,10 @@ PLEASE:
   - get the specific data from EpubExportStructure for the ncx and opf files and store them in the EpubExportEpubfile.
 -  `EpubExportEpubfile` (epubexportEpubfile.cpp`)
 -  `EpubExportContent` (epubexportContent.cpp`)
-   - create one xhtml file foreach section
+   - create one `EpubExportXhtml` file foreach section
+   - for each item in each page
+     - add the content for the `ScribusAPIDocumentItem` to the `EpubExportXhtml` file
+     - add the files needed for `ScribusAPIDocumentItem`to the `EpubExportEpubfile` and the `EpubExportStructure`'s manifest and, eventually, table of contents (Toc)
 
 ## TODO
 
@@ -64,6 +67,7 @@ PLEASE:
 
 
 ## Inherited TODO
+
 This todo list is taken from the older Epub plugin project and is not fully checked yet.
 
 

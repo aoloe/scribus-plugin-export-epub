@@ -56,6 +56,11 @@ void EpubExportContent::fillEpub(EpubExportEpubfile* epub, EpubExportStructure* 
                     xmlFile.addContent(item->getDomContentImage(xmlFile.getQDomDocument()));
                     // EpubExportImage image;
                 }
+                foreach (ScribusAPIDocumentItemResourceFile resourceFile, item->getResourceFiles())
+                {
+                    // TODO: add the file to the epub container
+                    // TODO: add the file to the toc + ncx
+                }
             }
         }
         QString filename = QString("Section%1.xhtml").arg(sectionI, 4, 10, QChar('0'));
