@@ -2,6 +2,7 @@
 
 #include <QString>
 #include <QDomElement>
+#include <QSize>
 
 #include "util_formats.h" // for checking file extension
 
@@ -52,7 +53,7 @@ bool ScribusAPIDocumentItem::isBefore(ScribusAPIDocumentItem* const item) const
  *   - add the p to the dom
  *   - set the current element as the latest element paragraph created
  */
-QList<QDomElement> ScribusAPIDocumentItem::getDomContentText(QDomDocument xhtmlDocument)
+QList<QDomElement> ScribusAPIDocumentItem::getTextDom(QDomDocument xhtmlDocument)
 {
     QList<QDomElement> result;
     // initialize the local variables
@@ -186,30 +187,29 @@ QList<QDomElement> ScribusAPIDocumentItem::getDomContentText(QDomDocument xhtmlD
 /**
  * @return the visible part of the image in PNG or JPG format
  */
-/*
-ScribusAPIDocumentItemImage ScribusAPIDocumentItem::getImageForDisplay()
+ScribusAPIDocumentItemImageWeb ScribusAPIDocumentItem::getImageWeb()
 {
-}
-*/
+    ScribusAPIDocumentItemImageWeb result;
 
-// bool ScribusAPIDocumentItem::getImage
-
-QList<QDomElement> ScribusAPIDocumentItem::getDomContentImage(QDomDocument xhtmlDocument)
-{
-    QList<QDomElement> result;
     QString filename(item->Pfile);
+    qDebug() << "filename" << filename;
     if (filename == "")
         return result;
+    result.path = filename;
 
     QFileInfo fileinfo = QFileInfo(filename);
     QString ext = fileinfo.suffix().toLower();
+
+    // TODO: sanitize the filename
+    // zippedFilename.remove(QRegExp("[^a-zA-Z\\d\\s_.-]"));
+    result.filename = fileinfo.fileName();
 
     int mediaType = 0;
     if (ext == "png")
         mediaType = FormatsManager::PNG;
     else if (extensionIndicatesJPEG(ext))
         mediaType = FormatsManager::JPEG;
-    qDebug() << "mediaType" << mediaType;
+    // qDebug() << "mediaType" << mediaType;
 
     if (mediaType == 0)
     {
@@ -218,7 +218,9 @@ QList<QDomElement> ScribusAPIDocumentItem::getDomContentImage(QDomDocument xhtml
         return result;
     }
 
-    QPixmap image; // null if the image has not been cropped nor scaled
+    result.mediatype = FormatsManager::instance()->mimetypeOfFormat(mediaType).first();
+
+    QPixmap image; // empty if the image has not been cropped nor scaled
     bool usingLoadedImage = false;
 
     // qDebug() << "image file" << filename;
@@ -241,6 +243,8 @@ QList<QDomElement> ScribusAPIDocumentItem::getDomContentImage(QDomDocument xhtml
     // calculate the frame's width and height in "image pixels"
     double frameWidth = item->width() / item->imageXScale();
     double frameHeight = item->height() / item->imageYScale();
+
+    result.imageSize = QSize(static_cast<int>(frameWidth), static_cast<int>(frameHeight));
 
      // TODO: if the image's width and height are already stored, only load the image when it has to be cropped or scaled
     if (!image.load(filename))
@@ -587,5 +591,19 @@ QDebug operator<<(QDebug dbg, const QVector<ScribusAPIDocumentItemTextRuns> &run
         dbg.nospace() << run;
     }
     dbg.nospace() << "]" ;
+    return dbg.space();
+}
+/**
+ * TODO: do not print the full content!
+ */
+QDebug operator<<(QDebug dbg, const ScribusAPIDocumentItemResourceFile file)
+{
+    dbg.nospace() << "(filename:" << file.filename << ", filePath:" << file.filePath  << ", fileContent:" << file.fileContent << ")";
+    return dbg.space();
+}
+
+QDebug operator<<(QDebug dbg, const ScribusAPIDocumentItemImageWeb image)
+{
+    dbg.nospace() << "(\npath:" << image.path << ",\nfilename:" << image.filename << ",\ncontent:" << image.content  << ",\ndescription:" << image.description << ",\nimageSize:" << image.imageSize << ",\nmediatype:" << image.mediatype << "\n)";
     return dbg.space();
 }

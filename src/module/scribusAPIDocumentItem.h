@@ -13,6 +13,7 @@
 #include <QObject>
 
 #include <QVector>
+#include <QSize>
 
 class QDomDocument;
 class QDomElement;
@@ -34,6 +35,15 @@ struct ScribusAPIDocumentItemResourceFile
     QString filename;
     QString filePath;
     QString fileContent;
+};
+struct ScribusAPIDocumentItemImageWeb
+{
+    QString path;
+    QString filename;
+    QString content;
+    QSize imageSize;
+    QString description; // for alt text
+    QString mediatype;
 };
 
 class ScribusAPIDocumentItem : public QObject
@@ -60,8 +70,8 @@ public:
     ScribusAPIDocumentItemFormatting getFormattingAtPosition(int position);
 
     // QString getXhtmlContent(QDomDocument xhtmlDocument);
-    QList<QDomElement> getDomContentText(QDomDocument xhtmlDocument);
-    QList<QDomElement> getDomContentImage(QDomDocument xhtmlDocument);
+    QList<QDomElement> getTextDom(QDomDocument xhtmlDocument);
+    ScribusAPIDocumentItemImageWeb getImageWeb();
     QList<ScribusAPIDocumentItemResourceFile> getResourceFiles();
 
     QVector<ScribusAPIDocumentItemTextRuns> getTextRuns();
@@ -77,5 +87,7 @@ protected:
 QDebug operator<<(QDebug dbg, const ScribusAPIDocumentItem &scribusDocumentItem);
 QDebug operator<<(QDebug dbg, const QVector<ScribusAPIDocumentItemTextRuns> &runs);
 QDebug operator<<(QDebug dbg, const ScribusAPIDocumentItemTextRuns run);
+QDebug operator<<(QDebug dbg, const ScribusAPIDocumentItemResourceFile file);
+QDebug operator<<(QDebug dbg, const ScribusAPIDocumentItemImageWeb image);
 
 #endif //SCRIBUSAPIDOCUMENTITEM_H 

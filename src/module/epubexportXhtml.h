@@ -12,6 +12,8 @@
 
 class QString;
 
+class ScribusAPIDocumentItemImageWeb;
+
 class EpubExportXhtml : public QObject
 {
     Q_OBJECT
@@ -22,7 +24,8 @@ public:
     void initialize(QString language, QString title, QString styleUrl);
     QString getString();
     QDomDocument getQDomDocument() { return xhtmlDocument; }
-    void addContent(QList<QDomElement> content);
+    void addContentText(QList<QDomElement> content);
+    void addContentImage(ScribusAPIDocumentItemImageWeb image);
 private:
     QDomDocument xhtmlDocument;
     QDomElement xhtmlRoot;

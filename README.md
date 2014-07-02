@@ -36,6 +36,30 @@ PLEASE:
 
 ## Features
 
+### Text exporting
+
+- Exports all the text that is not on master pages.
+- All defined styles are converted to css in the style file.
+- For each section start a new chapter
+- The text frames are rendered as placed on the page, from the top left to the bottom right corner.
+- Chained text are considered as one single text frame (the position of the first frame will be used).
+- Paragraph styles are rendered as `<p class="">` and character styles as `<span class="">`.
+- If the name of the font hints to a bold or italic formatting, the corresponding tag will be used.
+- All types of underlines are rendered as standard underlines.
+- Subscripts and superscripts are rendered through the corresponding tags.
+- Strikethrough is rendered through the corresponding tag.
+
+### Image exporting
+
+- Exports all the images that are not on master pages.
+- For now only PNG and JPPEG images are supporetd (in the future all other formats will be converted to PNG)
+- If the image does not fill exactly the frame, the images is cropped to its visible part.
+- If a maximal size is defined, the image is scaled down proportionally to its larger side (or always the width?).
+
+### Vector graphics and shapes
+
+Currently all shapes, lines and courbes are ignored.
+
 ## Code flow
 
 - `epubexportplugin.cpp`:

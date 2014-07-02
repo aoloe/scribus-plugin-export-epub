@@ -1,6 +1,7 @@
 #include <QDebug>
 
 #include "module/epubexportXhtml.h"
+#include "module/scribusAPIDocumentItem.h"
 
 #include <QString>
 
@@ -8,6 +9,7 @@
 #include <QDomImplementation>
 
 #include "text/specialchars.h"
+
 
 
 EpubExportXhtml::EpubExportXhtml()
@@ -77,13 +79,32 @@ void EpubExportXhtml::initialize(QString language, QString title, QString styleU
     xhtmlRoot.appendChild(xhtmlBody);
 }
 
-void EpubExportXhtml::addContent(QList<QDomElement> content)
+void EpubExportXhtml::addContentText(QList<QDomElement> content)
 {
     foreach (QDomElement paragraph, content)
     {
         // qDebug() << "paragraph" << paragraph;
         xhtmlBody.appendChild(paragraph);
     }
+}
+
+void EpubExportXhtml::addContentImage(ScribusAPIDocumentItemImageWeb image)
+{
+    // qDebug() << "image" << image;
+    // add the image to the dom
+    QDomElement div = xhtmlDocument.createElement("div");
+    // TODO: only set class picture if the images is maximized (or use different names: the goal is not to only set the page break before, if the picture is maximized)
+    div.setAttribute("class", "picture");
+    QDomElement element = xhtmlDocument.createElement("img");
+    // <image height="800" width="600" xlink:href="../Images/cover.jpeg"></image>
+    element.setAttribute("height", image.imageSize.height()); // TODO: use the real width of the visible part of the image (as a rectangle)
+    element.setAttribute("width", image.imageSize.width()); // TODO: use the real width of the visible part of the image (as a rectangle)
+    element.setAttribute("alt", ""); // TODO do we have a way to define the metadata? eventually from the exif? epubcheck says it's mandatory... and it's not nice to leave it empty...
+element.setAttribute("src", "../Images/"+image.filename); // TODO: make sure that the name is unique in the target! (if it already exists prefix the frame name?)
+// TODO: set the width and height? from the item?
+    div.appendChild(element);
+
+    xhtmlBody.appendChild(div);
 }
 
 /**
