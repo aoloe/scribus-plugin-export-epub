@@ -36,15 +36,64 @@ PLEASE:
 - try to keep the files as simple as possible and
 - submit one sample file per case.
 
+## Features
+
+### Text exporting
+
+- Exports all the text that is not on master pages.
+- All defined styles are converted to css in the style file.
+- For each section start a new chapter
+- The text frames are rendered as placed on the page, from the top left to the bottom right corner.
+- Chained text are considered as one single text frame (the position of the first frame will be used).
+- Paragraph styles are rendered as `<p class="">` and character styles as `<span class="">`.
+- If the name of the font hints to a bold or italic formatting, the corresponding tag will be used.
+- All types of underlines are rendered as standard underlines.
+- Subscripts and superscripts are rendered through the corresponding tags.
+- Strikethrough is rendered through the corresponding tag.
+
+### Image exporting
+
+- Exports all the images that are not on master pages.
+- For now only PNG and JPPEG images are supporetd (in the future all other formats will be converted to PNG)
+- If the image does not fill exactly the frame, the images is cropped to its visible part.
+- If a maximal size is defined, the image is scaled down proportionally to its larger side (or always the width?).
+
+### Vector graphics and shapes
+
+Currently all shapes, lines and courbes are ignored.
+
+## Code flow
+
+- `epubexportplugin.cpp`:
+  - implement the plug interface
+  - launch and evaluate the export dialog
+  - pass the the current document and the options from the dialog to `EpubExport`
+- `EpubExport` (`epubexport.cpp`):
+  - create `EpubExportEpubfile`
+  - create a `ScribusAPIDocument` with the current document, read the list of items and sections
+  - create `EpubExportStructure`
+  - get the metadata from `ScribusAPIDocument` and pass it to `EpubExportStructure`
+  - create `EpubExportContent`, pass `ScribusAPIDocument`and `EpubExportStructure` and get it to fill `
+  - get the cover from the structure (if one is defined) or from the first page of `ScribusAPIDocument` otherwise
+  - get the specific data from EpubExportStructure for the ncx and opf files and store them in the EpubExportEpubfile.
+-  `EpubExportEpubfile` (epubexportEpubfile.cpp`)
+-  `EpubExportContent` (epubexportContent.cpp`)
+   - create one `EpubExportXhtml` file foreach section
+   - for each item in each page
+     - add the content for the `ScribusAPIDocumentItem` to the `EpubExportXhtml` file
+     - add the files needed for `ScribusAPIDocumentItem`to the `EpubExportEpubfile` and the `EpubExportStructure`'s manifest and, eventually, table of contents (Toc)
+
 ## TODO
 
 - create the scripter binding so that i can run the tests in an automatic way
+- use the code to create an image from the first page and use it as a cover
 - reactivate the part on marks in getTextRuns() (warning: StoryText::item(i) is now private and i have to find a new way to detect marks
 - the new zip library does not correctly write the mimetype as the first file. fix the order
   or add an openArchive method (taken from unzip?) to be able to append to an existing file (and first add only the manifest, close the file and reopen it)
 
 
 ## Inherited TODO
+
 This todo list is taken from the older Epub plugin project and is not fully checked yet.
 
 

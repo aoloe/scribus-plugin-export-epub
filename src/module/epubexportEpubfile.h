@@ -24,6 +24,8 @@ public:
     void create();
     void close();
 
+    void addFile(const QString& filename, const QString& path);
+    void addFileUncompressed(const QString& filename, const QString& path);
     void add(QString filename, QString content);
     void addUncompressed(QString filename, QString content);
     void addUncompressed(QString filename, QByteArray content);

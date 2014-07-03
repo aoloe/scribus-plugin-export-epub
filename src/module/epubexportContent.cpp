@@ -4,6 +4,7 @@
 #include <QDebug>
 
 #include "module/epubexportContent.h"
+// #include "module/epubexportImage.h"
 #include "module/epubexportEpubfile.h"
 #include "module/epubexportStructure.h"
 
@@ -47,7 +48,26 @@ void EpubExportContent::fillEpub(EpubExportEpubfile* epub, EpubExportStructure* 
                 {
                     // TODO: how to get the xml back from item? as QDOM... or as QString?
                     // addTextXhtml(item->getXhtmlContent(xmlFile.getQDomDocument()));
-                    xmlFile.addContent(item->getDomContent(xmlFile.getQDomDocument()));
+                    xmlFile.addContentText(item->getTextDom(xmlFile.getQDomDocument()));
+                }
+                else if (item->isImageFrame())
+                {
+                    // item->setPageSize();
+                    // xmlFile.addContent(item->getDomContentImage(xmlFile.getQDomDocument()));
+                    // EpubExportImage image;
+                    ScribusAPIDocumentItemImageWeb image = item->getImageWeb();
+                    // TODO: make sure that the filename is unique (and that images are not inserted at double
+                    // by looking at the path?)
+                    xmlFile.addContentImage(image);
+                    // TODO: add the image to the package!
+                    epub->addFileUncompressed("OEBPS/Images/" + image.filename, image.path);
+                    // epub->add("OEBPS/Text/" + filename, xmlFile.getString());
+                    structure->addToManifest(image.filename, "Images/" + image.filename, image.mediatype);
+                }
+                foreach (ScribusAPIDocumentItemResourceFile resourceFile, item->getResourceFiles())
+                {
+                    // TODO: add the file to the epub container
+                    // TODO: add the file to the toc + ncx
                 }
             }
         }
