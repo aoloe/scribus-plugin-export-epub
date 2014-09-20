@@ -64,6 +64,7 @@ QList<QDomElement> ScribusAPIDocumentItem::getTextDom(QDomDocument xhtmlDocument
     QString characterStyleName;
     QString run_text;
 
+    // qDebug() << "item name" << item->itemName();
     ScribusAPIDocumentItemFormatting formatting;
     formatting.setItem(item);
     // qDebug() << "isTextFirstInChain" << isTextFirstInChain(); 

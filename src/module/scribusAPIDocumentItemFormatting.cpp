@@ -21,7 +21,21 @@ ScribusAPIDocumentItemFormatting::~ScribusAPIDocumentItemFormatting()
 void ScribusAPIDocumentItemFormatting::readAtPosition(PageItem* item, int position)
 {
 
-    paragraphStyleName = item->itemText.paragraphStyle(position + 1).parent();
+    // paragraphStyleName = item->itemText.paragraphStyle(position + 1).parent(); // TODO: + 1 might be dangerous!
+    // characterStyleName = item->itemText.charStyle(position + 1).displayName();
+    qDebug() << "position" << position;
+    qDebug() << "paragraphStyle" << item->itemText.paragraphStyle(position + 1).displayName();
+    ParagraphStyle paragraphStyle = item->itemText.paragraphStyle(position + 1);
+    paragraphStyleName = "";
+    /*
+            <PAGEOBJECT XPOS="" YPOS="" OwnPage="0" ItemID="" PTYPE="4" WIDTH="" HEIGHT="" FRTYPE="0" CLIPEDIT="0" PWIDTH="1" PLINEART="1" LOCALSCX="1" LOCALSCY="1" LOCALX="0" LOCALY="0" LOCALROT="0" PICART="1" SCALETYPE="1" RATIO="1" TXTFILL="FromSVG#f57900" COLUMNS="1" COLGAP="0" AUTOTEXT="0" EXTRA="0" TEXTRA="0" BEXTRA="0" REXTRA="0" VAlign="0" FLOP="0" PLTSHOW="0" BASEOF="0" textPathType="0" textPathFlipped="0" path="M0 0 L286.933 0 L286.933 22.7579 L0 22.7579 L0 0 Z" copath="M0 0 L286.933 0 L286.933 22.7579 L0 22.7579 L0 0 Z" gXpos="560.09905511811" gYpos="498.424488188977" gWidth="0" gHeight="0" ALIGN="0" LAYER="0" NEXTITEM="-1" BACKITEM="-1">
+            <ITEXT CPARENT="Sous-titre" FONT="Gillius ADF Bold" FCOLOR="Black" CH="x"/>
+                <trail ALIGN="0"/>
+                </PAGEOBJECT>
+    */
+
+    if (paragraphStyle.displayName() != "")
+        paragraphStyleName = paragraphStyle.parent(); // TODO: + 1 might be dangerous!
     characterStyleName = item->itemText.charStyle(position + 1).displayName();
 
     const CharStyle& style(item->itemText.charStyle(position));
