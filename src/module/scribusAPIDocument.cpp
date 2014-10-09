@@ -8,6 +8,7 @@
 
 #include "module/scribusAPIDocument.h"
 #include "module/scribusAPIDocumentItem.h"
+// TODO: i guess that the following include should be removed
 #include "module/epubexportStructure.h"
 
 #include "scribusdoc.h"
@@ -52,6 +53,7 @@ ScribusAPIDocumentMetadata ScribusAPIDocument::getMetadata()
 
 /**
   * add OEBPS/Styles/style.css to the current epub file
+  * TODO: move to ScribusAPIDocumentStyle
   */ 
 QString ScribusAPIDocument::getStylesAsCss()
 {

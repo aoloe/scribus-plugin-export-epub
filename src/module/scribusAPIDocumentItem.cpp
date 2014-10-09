@@ -97,6 +97,9 @@ QList<QDomElement> ScribusAPIDocumentItem::getTextDom(QDomDocument xhtmlDocument
 
             if (formatting.isBold())
             {
+                qDebug() << "paragraphStyleName" << paragraphStyleName;
+                // TODO: only set b (and i & co) if b is not set in the paragraph or character style
+                // TODO: find a way to remove the bold if it's in the style but not in the local formatting
                 element = xhtmlDocument.createElement("b");
                 elementCurrent.appendChild(element);
                 elementCurrent = element;

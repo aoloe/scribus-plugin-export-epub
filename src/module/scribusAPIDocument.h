@@ -1,5 +1,5 @@
 /**
- * ScribusAPIDoc contains a reference to the current scribus document and is used as
+ * ScribusAPIDocument contains a reference to the current scribus document and is used as
  * an interface to get information and parse the scribus document itself
  */
 #ifndef SCRIBUSAPIDOCUMENT_H
