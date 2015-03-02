@@ -378,10 +378,10 @@ QRect ScribusAPIDocument::getPageRect(const ScPage* page)
 {
     MarginStruct bleeds = getPageBleeds(page);
     return QRect(
-        static_cast<int>(page->xOffset() - bleeds.Left), // x
-        static_cast<int>(page->yOffset() - bleeds.Top), // y
-        static_cast<int>(page->width() + bleeds.Left + bleeds.Right), // w
-        static_cast<int>(page->height()+ bleeds.Bottom + bleeds.Top) // h
+        static_cast<int>(page->xOffset() - bleeds.left()), // x
+        static_cast<int>(page->yOffset() - bleeds.top()), // y
+        static_cast<int>(page->width() + bleeds.left() + bleeds.right()), // w
+        static_cast<int>(page->height()+ bleeds.bottom() + bleeds.top()) // h
     );
 }
 
