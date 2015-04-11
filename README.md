@@ -1,7 +1,5 @@
-# scribus-plugin-export-epub
+# Epub export plugin for Scribus
 
-
-Epub export plugin for scribus.
 
 This plugin is not a tool to design epub files, but it takes your SLA file (the scribus file) and exports all the content -- text with paragraph style, character styles, and some of the local formatting; images -- and packs it in a well formatted epub file.
 
@@ -90,6 +88,7 @@ Currently all shapes, lines and courbes are ignored.
 - reactivate the part on marks in getTextRuns() (warning: StoryText::item(i) is now private and i have to find a new way to detect marks
 - the new zip library does not correctly write the mimetype as the first file. fix the order
   or add an openArchive method (taken from unzip?) to be able to append to an existing file (and first add only the manifest, close the file and reopen it)
+- have a look at David Tardon's (and Document Liberation's) epup generator. It's probably not very useful to us since it adds a dependency on boost, but it might have some good parts that we can copy.
 
 
 ## Inherited TODO
