@@ -170,3 +170,6 @@ This todo list is taken from the older Epub plugin project and is not fully chec
 - show a report
   - which styles are not matching between .sla and .css?
 
+## Notes
+
+- <http://epub.exirel.me/> epub library for python

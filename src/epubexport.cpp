@@ -3,7 +3,8 @@
 #include "epubexport.h"
 #include "scribusdoc.h"
 
-#include "module/scribusAPIDocument.h"
+#include "plugins/scribusAPI/scribusAPIDocument.h"
+#include "plugins/scribusAPI/scribusAPI.h"
 #include "module/epubexportEpubfile.h"
 #include "module/epubexportStructure.h"
 #include "module/epubexportContent.h"

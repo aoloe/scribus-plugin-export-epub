@@ -7,6 +7,8 @@
 
 #include "ui/multiprogressdialog.h"
 
+#include "plugins/scribusAPItest/scribusAPItest.h"
+
 int epubexportplugin_getPluginAPIVersion()
 {
 	return PLUGIN_API_VERSION;
@@ -76,6 +78,10 @@ void EpubExportPlugin::deleteAboutData(const AboutData* about) const
 
 bool EpubExportPlugin::run(ScribusDoc* doc, QString target)
 {
+
+    ScribusAPITest* test = new ScribusAPITest();
+    qDebug() << "test:" << test->getTestString();
+
 	Q_ASSERT(target.isNull());
 	ScribusDoc* currDoc=doc;
 	if (currDoc == 0)
