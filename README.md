@@ -8,6 +8,8 @@ You will then be able to open the epub file with sigil (or any other epub editor
 
 ## Install
 
+First make sure that you have the ScribusAPI plugin (https://github.com/aoloe/scribus-plugin-API).
+
 Clone the `scribus-plugin-export-plugin` repository and put – or symlink – its `src` directory into `scribus/plugins/export/` as `epub`. Then add 
 
     ADD_SUBDIRECTORY(epub)
@@ -170,3 +172,6 @@ This todo list is taken from the older Epub plugin project and is not fully chec
 - show a report
   - which styles are not matching between .sla and .css?
 
+## Notes
+
+- <http://epub.exirel.me/> epub library for python
