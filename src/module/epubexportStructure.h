@@ -15,7 +15,7 @@
 
 #include "scribusapi.h" // for SCRIBUS_API
 
-#include "plugins/scribusAPI/Document.h"
+#include "plugins/scribusAPI/scribusAPIDocument.h"
 
 /*
 struct EpubExportStructureMetadata

@@ -9,7 +9,7 @@
 
 #include <QList>
 
-#include "plugins/scribusAPI/Document.h"
+#include "plugins/scribusAPI/scribusAPIDocument.h"
 
 class EpubExportEpubfile;
 class EpubExportStructure;

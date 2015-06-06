@@ -8,7 +8,7 @@
 #include "module/epubexportEpubfile.h"
 #include "module/epubexportStructure.h"
 
-#include "plugins/scribusAPI/DocumentItem.h"
+#include "plugins/scribusAPI/scribusAPIDocumentItem.h"
 
 #include "module/epubexportXhtml.h"
 

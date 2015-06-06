@@ -13,7 +13,7 @@
 
 #include "documentinformation.h"
 
-#include "plugins/scribusAPI/Document.h"
+#include "plugins/scribusAPI/scribusAPIDocument.h"
 
 EpubExportStructure::EpubExportStructure()
 {
