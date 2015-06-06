@@ -1,7 +1,7 @@
 #include <QDebug>
 
 #include "module/epubexportXhtml.h"
-#include "module/scribusAPIDocumentItem.h"
+#include "plugins/scribusAPI/DocumentItem.h"
 
 #include <QString>
 

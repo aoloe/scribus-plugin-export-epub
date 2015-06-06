@@ -6,8 +6,8 @@
 
 #include "styles/charstyle.h"
 
-#include "module/scribusAPIDocumentItem.h"
-#include "module/scribusAPIDocumentItemFormatting.h"
+#include "plugins/scribusAPI/DocumentItem.h"
+#include "plugins/scribusAPI/DocumentItemFormatting.h"
 
 ScribusAPIDocumentItemFormatting::ScribusAPIDocumentItemFormatting()
 {

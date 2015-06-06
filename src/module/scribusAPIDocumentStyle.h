@@ -20,4 +20,4 @@ public:
 	ScribusAPIDocumentStyle();
 	~ScribusAPIDocumentStyle();
 
-#endif // SCRIBUSAPIDOCUMENT_H 
+#endif // SCRIBUSAPIDOCUMENTSTYLE_H

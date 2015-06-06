@@ -1,6 +1,6 @@
 #include <QDebug>
 
-#include "module/scribusAPIDocument.h"
+#include "plugins/scribusAPI/Document.h"
 
 ScribusAPIDocumentStyle::ScribusAPIDocumentStyle()
 {
