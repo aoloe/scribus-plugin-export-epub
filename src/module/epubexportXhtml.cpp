@@ -21,9 +21,10 @@ EpubExportXhtml::~EpubExportXhtml()
 }
 
 /**
-  * create the xhtml document structure and give access to xhtmlBody where addText and addImage
+  * @brief create the xhtml document structure and give access to xhtmlBody where addText and addImage
   * will add the content
   *
+  * ~~~.xml
   * <?xml version="1.0" encoding="UTF-8" ?>
   * <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
   * <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -35,6 +36,7 @@ EpubExportXhtml::~EpubExportXhtml()
   *   <body>
   *   </body>
   * </html>
+  * ~~~
   */
 void EpubExportXhtml::initialize(QString language, QString title, QString styleUrl)
 {
@@ -79,6 +81,9 @@ void EpubExportXhtml::initialize(QString language, QString title, QString styleU
     xhtmlRoot.appendChild(xhtmlBody);
 }
 
+/**
+ * @brief Append the content one paragraph at a time.
+ */
 void EpubExportXhtml::addContentText(QList<QDomElement> content)
 {
     foreach (QDomElement paragraph, content)
@@ -88,6 +93,9 @@ void EpubExportXhtml::addContentText(QList<QDomElement> content)
     }
 }
 
+/**
+ * Add one image.
+ */
 void EpubExportXhtml::addContentImage(ScribusAPIDocumentItemImageWeb image)
 {
     // qDebug() << "image" << image;
@@ -108,16 +116,21 @@ element.setAttribute("src", "../Images/"+image.filename); // TODO: make sure tha
 }
 
 /**
- * TODO: refactor and include getFixedXhtml() in here
+ * @brief Get the Xhtml file as a string.
+ * 
+ * TODO: 
+ * - refactor and include getFixedXhtml() in here
  */
 QString EpubExportXhtml::getString() {
     return getFixedXhtml(xhtmlDocument.toString(-1));
 }
 
 /**
- * replace the unicode characters to entities if needed.
- * TODO: we should find a way to correctly insert them in addText() itself, without having to "fix"
- * them afterwards (ale/20120606)
+ * @brief replace the unicode characters to entities if needed.
+ *
+ * TODO: 
+ * - we should find a way to correctly insert them in addText() itself, without having to "fix"
+ *   them afterwards (ale/20120606)
  */
 QString EpubExportXhtml::getFixedXhtml(QString xhtml) {
 

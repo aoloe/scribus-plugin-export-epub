@@ -13,6 +13,10 @@ class QString;
 class ScribusDoc;
 class ScribusMainWindow;
 
+/**
+ * This is the standard entry point for the plugin and is automatically loaded by Scribus.
+ * @brief Standard entry point for the plugin; Attaches itself to the menu, shows the "Export" dialog and calls `EpubExport::doExport()`
+ */
 class PLUGIN_API EpubExportPlugin : public ScActionPlugin
 {
 	Q_OBJECT

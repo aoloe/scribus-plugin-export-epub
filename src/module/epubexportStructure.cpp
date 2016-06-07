@@ -24,6 +24,9 @@ EpubExportStructure::~EpubExportStructure()
 {
 }
 
+/**
+ * @brief Read the metadata, as provided by the ScribusAPI plugin.
+ */
 void EpubExportStructure::readMetadata(ScribusAPIDocumentMetadata metadata)
 {
     qDebug() << "metadata" << metadata;
@@ -46,6 +49,10 @@ void EpubExportStructure::readMetadata(ScribusAPIDocumentMetadata metadata)
 		this->metadata.date = QDate::currentDate().toString(Qt::ISODate);
 }
 
+/**
+ * @brief create an EpubExportStructureManifestItem and it to the manifest.
+ * @param mediatype media-type as defined by <http://www.iana.org/assignments/media-types/media-types.xhtml>
+ */
 void EpubExportStructure::addToManifest(QString id, QString path, QString mediatype)
 {
     EpubExportStructureManifestItem item;
@@ -55,6 +62,10 @@ void EpubExportStructure::addToManifest(QString id, QString path, QString mediat
     addToManifest(item);
 }
 
+/**
+ * @brief create an EpubExportStructureManifestItem and it to the table of contents.
+ * @param mediatype media-type as defined by <http://www.iana.org/assignments/media-types/media-types.xhtml>
+ */
 void EpubExportStructure::addToToc(QString id, QString path, QString title)
 {
     EpubExportStructureManifestItem item;
@@ -65,11 +76,15 @@ void EpubExportStructure::addToToc(QString id, QString path, QString title)
 }
 
 /**
-  * creates the xml string for the OPF file
+  * @brief creates the xml string for the OPF file
+  *
   * The OPF file, traditionally named content.opf, houses the EPUB book's metadata,
   * file manifest, and linear reading order.
-  * on the IDPF site you can find the full list of the possible metadata
-  * http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.2
+  *
+  * On the IDPF site you can find the full list of the possible metadata
+  * <http://idpf.org/epub/20/spec/OPF_2.0.1_draft.htm#Section2.2>
+  * 
+  * ~~~.xml
   * <?xml version="1.0"?>
   * <package version="2.0" xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookId">
   *   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
@@ -92,6 +107,7 @@ void EpubExportStructure::addToToc(QString id, QString path, QString title)
   *     <reference type="loi" title="List Of Illustrations" href="appendix.html#figures" />
   *   </guide>
   * </package>
+  * ~~~
   */
 QString EpubExportStructure::getOPF()
 {
@@ -292,7 +308,9 @@ QString EpubExportStructure::getOPF()
 }
 
 /**
-  * creates the xml string for the NCX file
+  * @brief creates the xml string for the NCX file
+  *
+  * ~~~.xml
   * <?xml version="1.0" encoding="UTF-8"?>
   * <!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN"
   * "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
@@ -316,6 +334,7 @@ QString EpubExportStructure::getOPF()
   *     </navPoint>
   *   </navMap>
   * </ncx>
+  * ~~~
   */ 
 QString EpubExportStructure::getNCX()
 {
@@ -401,13 +420,16 @@ QString EpubExportStructure::getNCX()
 }
 
 /**
-  * add META-INF/container.xml to the current epub file
+  * @brief add META-INF/container.xml to the current epub file
+  *
+  * ~~~.xml
   * <?xml version="1.0" encoding="UTF-8" ?>
   * <container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
   *   <rootfiles>
   * 	<rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>
   *   </rootfiles>
   * </container>
+  * ~~~
   */ 
 QString EpubExportStructure::getContainer()
 {

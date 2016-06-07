@@ -14,6 +14,9 @@ class QString;
 
 class ScribusAPIDocumentItemImageWeb;
 
+/**
+ * @brief collect the content of the Xhtml files that are to be added to the epub file.
+ */
 class EpubExportXhtml : public QObject
 {
     Q_OBJECT

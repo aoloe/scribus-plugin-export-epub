@@ -1,9 +1,4 @@
-/**
- * this file extends the the OSDaB (http://osdab.42cows.org/) Zip class
- * to allow zipping in memory variables.
- * the goal is to extend it in a way that it allows to store it without first
- * creating a temp file
- */
+// Extend the Zip class and allow zipping strings instead of files
 
 #include <QDebug>
 #include <QString>
@@ -20,17 +15,13 @@ EpubExportZip::~EpubExportZip()
 {
 }
 
-void EpubExportZip::addString(const QString& path, QByteArray& content)
-{
-    addString(path, content, EpubExportZip::Deflate9);
-}
-
-void EpubExportZip::addString(const QString& path, QByteArray& content, CompressionLevel level)
-{
-    // TODO: "implement addFile for QByteArray";
-    qDebug() << "implement addFile for QByteArray";
-}
-
+/**
+ * @param level Zip::Deflate1 (minimum compression) .. Zip::Deflate9 (maximum compression); Zip::Store (no compression)
+ * @param path The path inside of the zip file
+ * @param content The stream of characters to be stored as a file
+ * @todo:
+ * - shouldn't the temporary file be deleted?
+ */
 void EpubExportZip::addString(const QString& path, QString& content, CompressionLevel level)
 {
     // TODO: find a way to use in memory files... if not possible, maybe patch the zip library
@@ -53,6 +44,14 @@ void EpubExportZip::addString(const QString& path, QString& content, Compression
     }
 }
 
+/**
+ * @param level if you don't set a level, maximum compression will be level: you will probably only want
+ * to set it, if you don't want any compression (`Zip::Store`).
+ * @param path The path inside of the zip file
+ * @param content The stream of characters to be stored as a file
+ * @todo:
+ * - shouldn't the temporary file be deleted?
+ */
 void EpubExportZip::addByteArray(const QString& path, QByteArray& content, CompressionLevel level)
 {
     // TODO: find a way to use in memory files... if not possible, maybe patch the zip library

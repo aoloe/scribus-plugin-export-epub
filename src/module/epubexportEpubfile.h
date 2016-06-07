@@ -11,6 +11,9 @@ class QByteArray;
 
 #include "module/epubexportZip.h"
 
+/**
+ * @brief Manage the epub file lifetime and add compressed / uncompressed files to the Epub file.
+ */
 class EpubExportEpubfile : public QObject
 {
     Q_OBJECT

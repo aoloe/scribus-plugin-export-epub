@@ -18,6 +18,9 @@
 class ScribusDoc;
 // class EpubExport;
 
+/**
+ * @brief display the export dialog and prepare the values from the dialog for the EpubExportOptions structure.
+ */
 class EpubExportDialog : public QDialog, Ui::EpubExportDialog
 {
 	Q_OBJECT

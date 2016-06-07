@@ -113,6 +113,9 @@ void EpubExportDialog::cancelButton_clicked()
 	reject();
 }
 
+/**
+ * @brief Read the dialog values and set them in the EpubExportOptions structure.
+ */
 void EpubExportDialog::exportButton_clicked()
 {
     // see gtfiledialog.ui for a way to integrate a file manager

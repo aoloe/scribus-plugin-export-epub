@@ -10,6 +10,9 @@
 class ScribusDoc;
 class MultiProgressDialog;
 
+/**
+ * @brief The options for the Epub export, as defined in the Export dialog.
+ */
 struct EpubExportOptions
 {
     QString targetFilename;
@@ -24,10 +27,12 @@ struct EpubExportOptions
     }
 };
 
-class EpubExport : public QObject
-/*
- * Inspired by svgexplugin
+/**
+ * @brief This is the main epub export class. It gets called by `EpubExportPlugin` after the the export dialog.
+ *
+ * Inspired by svgexplugin.
  */
+class EpubExport : public QObject
 {
     Q_OBJECT
 

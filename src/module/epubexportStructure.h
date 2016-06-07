@@ -75,6 +75,9 @@ struct EpubExportStructureMetadata
 };
 */
 
+/**
+ * @brief Data structure collecting the information for a manifest item
+ */
 struct EpubExportStructureManifestItem
 {
     QString id;
@@ -95,6 +98,9 @@ struct EpubExportStructureManifestItem
 };
 
 
+/**
+ * @brief Contains the structure data of the Epub file (metadata, manifest, cover, Xml files, ...)
+ */
 class EpubExportStructure : public QObject
 {
     Q_OBJECT
@@ -107,13 +113,22 @@ public:
 	ScribusAPIDocumentMetadata getMetadata() {return metadata;}
 
 	void setFilename(QString filename) {this->filename = filename;}
+    /**
+     * @brief add an EpubExportStructureManifestItem to the manifest.
+     */
 	void addToManifest(EpubExportStructureManifestItem item) {this->manifest.append(item);}
 	void addToManifest(QString id, QString path, QString mediatype);
 	void addToToc(QString id, QString path, QString title);
+    /**
+     * @brief add an EpubExportStructureManifestItem to the table of contents.
+     */
 	void addToToc(EpubExportStructureManifestItem item) {this->toc.append(item);}
     QString getOPF();
     QString getNCX();
     QString getContainer();
+    /**
+     * @param cover content of a PNG file as a byte stream
+     */
 	void setCover(QByteArray cover) {this->cover = cover;}
     bool hasCover() {return !this->cover.isEmpty();}
     QByteArray getCover();

@@ -74,6 +74,14 @@ void EpubExportPlugin::deleteAboutData(const AboutData* about) const
 	delete about;
 }
 
+/**
+ * This method is automatically called by Scribus when the plugin action is activated.
+ *
+ * If a document is open, show the export dialog and call `EpubExport::doExport()`.
+ *
+ * @todo:
+ * - do not show the dialog if Scribus runs in "server" mode.
+ */
 bool EpubExportPlugin::run(ScribusDoc* doc, QString target)
 {
 

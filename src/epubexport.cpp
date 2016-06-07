@@ -22,10 +22,23 @@ EpubExport::~EpubExport()
 {
 }
 
+/**
+ * - Create the Epub file
+ * - Setup `ScribusAPIDocument` with the current document
+ * - Fill the document information
+ * - Use `ScribusAPIDocument` to read the styles and add them to the Epub's css file.
+ * - Use `EpubExportContent` to
+ *   - fill the Epub with the content and
+ *   - update the structure
+ * - Set the Epub's cover
+ * - Add the "structure" files.
+ */
 void EpubExport::doExport()
 {
     // qDebug() << "options" << options;
 
+    // if it's my computer, always put the epub file in /tmp
+    // TODO: remove before releasing the plugin
     if (QDir::homePath() == "/home/ale")
     {
         options.targetFilename = "/tmp/"+options.targetFilename;

@@ -1,6 +1,3 @@
-/**
- *
- */
 #include <QDebug>
 
 #include "module/epubexportContent.h"
@@ -22,8 +19,20 @@ EpubExportContent::~EpubExportContent()
 }
 
 /**
- * for each section create an xhtml file that gets added to the epub file.
- * the content is retrieved by looping through the pages and adding each item sequentially to the xhtml structure
+ * For each section of `scribusDocument`, create an xhtml file that gets added to the epub file.
+ * Fhe content is retrieved by looping through the pages and adding each item sequentially to the xhtml structure
+ *
+ * This function is called by `EpubExport::doExport()`.
+ *
+ * The class member `scribusDocument` must be set before calling `fillEpub()`
+ *
+ * The parameters are the passed by reference and are the result.
+ *
+ * @param epub The epub file to be filled.
+ * @param structure The structure containing the manifest where each xhtml and image files are added.
+ *
+ * @todo:
+ * - do not pass epub and structure as parameters but set/query them as class members?
  */
 void EpubExportContent::fillEpub(EpubExportEpubfile* epub, EpubExportStructure* structure)
 {

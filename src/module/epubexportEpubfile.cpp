@@ -15,6 +15,9 @@ EpubExportEpubfile::~EpubExportEpubfile()
 {
 }
 
+/**
+ * @brief Create the internal EpubExportZip file
+ */
 void EpubExportEpubfile::create()
 {
     file = new EpubExportZip();
@@ -30,23 +33,43 @@ void EpubExportEpubfile::close()
 delete file;
 }
 
+/**
+ * @brief Add a file compressed.
+ * @param filename Path to the file in the Epub file
+ * @param path Path to the file to be added
+ */
 void EpubExportEpubfile::addFile(const QString& filename, const QString& path)
 {
     QFileInfo fileinfo(filename);
     file->addFile(path, fileinfo.path(), getDefaultCompressionLevel(true));
 }
 
+/**
+ * @brief Add a file uncompressed. You need this for images.
+ * @param filename Path to the file in the Epub file
+ * @param path Path to the file to be added
+ */
 void EpubExportEpubfile::addFileUncompressed(const QString& filename, const QString& path)
 {
     QFileInfo fileinfo(filename);
     file->addFile(path, fileinfo.path(), getDefaultCompressionLevel(false));
 }
 
+/**
+ * @brief Add a string compressed. You need this for Html content.
+ * @param filename Path to the file in the Epub file
+ * @param content The content of the file to be added
+ */
 void EpubExportEpubfile::add(QString filename, QString content)
 {
     file->addString(filename, content, getDefaultCompressionLevel(true));
 }
 
+/**
+ * @brief Add a string uncompressed. You need this for the manifest.
+ * @param filename Path to the file in the Epub file
+ * @param content The content of the file to be added
+ */
 void EpubExportEpubfile::addUncompressed(QString filename, QString content)
 {
     file->addString(filename, content, getDefaultCompressionLevel(false));

@@ -1,6 +1,4 @@
-/**
- * Prepare the image for for the epub Exporting
- */
+// Prepare the image for for the epub Exporting
 #ifndef EPUBEXPORTIMAGE_H
 #define EPUBEXPORTIMAGE_H
 
@@ -8,6 +6,9 @@
 
 #include <QObject>
 
+/**
+ * @brief  Prepare the image for for the epub Exporting. Not used yet.
+ */
 class EpubExportImage : public QObject
 {
     Q_OBJECT
