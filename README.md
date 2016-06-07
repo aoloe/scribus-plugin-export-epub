@@ -5,6 +5,7 @@ This plugin is not a tool to design epub files, but it takes your SLA file (the 
 
 You will then be able to open the epub file with sigil (or any other epub editor) and tweak it to your needs.
 
+<http://impagina.org/dox/epub-export/>
 
 ## Install
 
