@@ -25,6 +25,7 @@ EpubExportContent::~EpubExportContent()
  * This function is called by `EpubExport::doExport()`.
  *
  * The class member `scribusDocument` must be set before calling `fillEpub()`
+ * (TODO: remove as soon as it's in the constructor)
  *
  * The parameters are the passed by reference and are the result.
  *

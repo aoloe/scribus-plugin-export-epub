@@ -50,6 +50,7 @@ void EpubExport::doExport()
     epub->create();
 
 
+    // TODO: pass scribusDoc as parameter to ScribusAPIDocument
     ScribusAPIDocument* scribusDocument = new ScribusAPIDocument();
     scribusDocument->set(this->scribusDoc);
     scribusDocument->setPageRange(this->options.pageRange);
@@ -63,6 +64,7 @@ void EpubExport::doExport()
     epub->add("OEBPS/Styles/style.css", scribusDocument->getStylesAsCss());
     structure->addToManifest("stylesheet", "Styles/style.css", "text/css");
 
+    // TODO: add scribusDocument in the constructor
     EpubExportContent* content = new EpubExportContent();
     content->setDocument(scribusDocument);
 

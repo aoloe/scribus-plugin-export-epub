@@ -24,11 +24,13 @@ class EpubExportContent : public QObject
     Q_OBJECT
 
 public:
+	EpubExportContent(ScribusAPIDocument* scribusDocument) : scribusDocument{scribusDocument} {};
 	EpubExportContent();
 	~EpubExportContent();
 
     /**
      * @brief Pass the current document to the content class.
+     * @deprecated Pass the scribusDocument to the constructor.
      */
     void setDocument(ScribusAPIDocument* scribusDocument) { this->scribusDocument = scribusDocument; }
     /**
