@@ -123,6 +123,7 @@ public:
      * @brief add an EpubExportStructureManifestItem to the table of contents.
      */
 	void addToToc(EpubExportStructureManifestItem item) {this->toc.append(item);}
+    QByteArray getFirstPageAsCoverImage(ScribusAPIDocument* scribusDocument);
     QString getOPF();
     QString getNCX();
     QString getContainer();

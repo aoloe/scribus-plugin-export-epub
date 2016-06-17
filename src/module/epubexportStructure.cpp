@@ -76,6 +76,26 @@ void EpubExportStructure::addToToc(QString id, QString path, QString title)
 }
 
 /**
+ * create a cover as a png of the first page of the .sla
+ * From the Sigil documentation:
+ * - Image size should be 590 pixels wide x 750 pixels high
+ * - Image resolution should be 72 pixels per inch (ppi) or higher
+ * - Use color images, saved in RGB color space
+ * - Image format can be JPEG, GIF, or PNG.
+ * TODO:
+ * - make sure that a cover.png image does not yet exist
+ * - create an xhtml file with the cover?
+ *   http://blog.threepress.org/2009/11/20/best-practices-in-epub-cover-images/
+ */
+QByteArray EpubExportStructure::getFirstPageAsCoverImage(ScribusAPIDocument* scribusDocument)
+{
+    if (scribusDocument->isPortrait(0))
+        return scribusDocument->getPageAsPNG(0, 750);
+    else
+        return scribusDocument->getPageAsPNG(0, 590);
+}
+
+/**
   * @brief creates the xml string for the OPF file
   *
   * The OPF file, traditionally named content.opf, houses the EPUB book's metadata,

@@ -77,7 +77,8 @@ void EpubExport::doExport()
         // TODO: implement a way to set the cover
         epub->addUncompressed("OEBPS/Images/cover.png", structure->getCover());
     } else {
-        epub->addUncompressed("OEBPS/Images/cover.png", scribusDocument->getFirstPageAsCoverImage());
+        // epub->addUncompressed("OEBPS/Images/cover.png", scribusDocument->getFirstPageAsCoverImage());
+        epub->addUncompressed("OEBPS/Images/cover.png", structure->getFirstPageAsCoverImage(scribusDocument));
     }
     structure->addToManifest("cover.png", "Images/cover.png", "image/png");
 
