@@ -15,6 +15,8 @@ Clone the `scribus-plugin-export-plugin` repository and put – or symlink – i
 
 to `CMakeList.txt` file in `scribus/plugins/export/`.
 
+In the [Getting started](https://github.com/aoloe/scribus-manual-development/blob/master/content/getting-started/getting-started.md) manual for Scribus developers, you'll find [more in details instructions](https://github.com/aoloe/scribus-manual-development/blob/master/content/getting-started/getting-started.md#adding-a-plugin-from-a-github-repository).
+
 ## Samples
 
 You can submit samples .sla by forking
