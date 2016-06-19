@@ -6,6 +6,7 @@
 #include "module/epubexportStructure.h"
 
 #include "plugins/scribusAPI/scribusAPIDocumentItem.h"
+#include "plugins/scribusAPI/scribusAPIDocumentItemText.h"
 
 #include "module/epubexportXhtml.h"
 
@@ -58,7 +59,7 @@ void EpubExportContent::fillEpub(EpubExportEpubfile* epub, EpubExportStructure* 
                 {
                     // TODO: how to get the xml back from item? as QDOM... or as QString?
                     // addTextXhtml(item->getXhtmlContent(xmlFile.getQDomDocument()));
-                    xmlFile.addContentText(item->getTextDom(xmlFile.getQDomDocument()));
+                    xmlFile.addContentText(item->getText()->getDom(xmlFile.getQDomDocument()));
                 }
                 else if (item->isImageFrame())
                 {
